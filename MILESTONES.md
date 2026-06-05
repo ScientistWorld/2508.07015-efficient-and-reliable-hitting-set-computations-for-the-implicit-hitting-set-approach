@@ -13,5 +13,10 @@
 - All three variants solved 3/3 tracked instances and matched independently enumerated optima.
 - The SLS-assisted variant preserved exact final optimality while reducing exact hitting-set optimizer calls from 5.0 to 1.333 on average.
 
+### [2026-06-05 08:16] - core_claim
+- Audited the existing method, evaluator, scripts, scoring, and documentation after milestone reset.
+- Fixed evaluator coverage so missing benchmark rows are counted as unsolved rather than omitted.
+- Reran `scripts/reproduce.sh` and `python validate.py --compare`; all checks passed with the same core-claim metrics.
+
 ## Stop Justification
 - Completed at milestone `core_claim`.

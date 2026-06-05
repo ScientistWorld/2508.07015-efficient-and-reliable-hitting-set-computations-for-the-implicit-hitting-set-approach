@@ -6,6 +6,7 @@
 - Verified the official Zenodo artifact URLs and downloaded `Results.zip` and `Solver.zip` into `data/downloads/`.
 - Implemented a scaled, pure-Python PBO-IHS reproduction with exact IP-style HS, PB-style SIS HS, and SLS+SIS variants.
 - Added independent evaluation that does not import `method/`.
+- Audited the evaluator and tightened it so every tracked instance is scored for each variant; missing artifacts now count as failures.
 
 ## Results Achieved
 
@@ -39,3 +40,4 @@ The method is scaled down, not replaced: it still alternates between hitting-set
 ## Issues Encountered
 
 - The official solver stack depends on several native and optional commercial components. A pure-Python scaled implementation was used for the first reusable gym milestone.
+- Audit found that the first evaluator averaged only over rows present in an artifact. This has been fixed so partial submissions are penalized.

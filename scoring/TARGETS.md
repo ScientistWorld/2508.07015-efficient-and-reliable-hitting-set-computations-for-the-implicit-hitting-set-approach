@@ -4,6 +4,8 @@
 
 This benchmark evaluates whether a solver implements the PBO-IHS problem-solving loop on the tracked pseudo-Boolean instances.
 
+Every tracked instance is scored for each submitted variant. Omitting an instance is treated as an unsolved instance, not as a smaller benchmark.
+
 Primary benefit metric:
 - `optimality_match_rate`: fraction of instances where the reported solution matches the independently computed optimum.
 

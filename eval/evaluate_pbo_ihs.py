@@ -33,6 +33,7 @@ def evaluate(results_path: Path) -> dict:
 
     score_results = {}
     for variant, rows in sorted(grouped.items()):
+        by_instance = {row["instance"]: row for row in rows if row.get("instance") in instances}
         solved = 0
         exact_matches = 0
         cert_matches = 0
@@ -40,23 +41,26 @@ def evaluate(results_path: Path) -> dict:
         total_decisions = 0
         total_exact_hs = 0
         sls_successes = 0
-        for row in rows:
-            inst = instances[row["instance"]]
+        for instance_name, inst in instances.items():
+            row = by_instance.get(instance_name)
+            if row is None or not row.get("solved") or row.get("best_assignment") is None:
+                continue
+
             assignment = tuple(row["best_assignment"])
-            feasible = all(c.satisfied(assignment) for c in inst.constraints)
-            cost = inst.objective_cost(assignment)
-            optimal = feasible and cost == optima[row["instance"]] == row["optimal_cost"]
-            cert = row["certificate"]
-            cert_ok = cert.get("lower_bound") == cert.get("upper_bound") == row["optimal_cost"]
+            feasible = len(assignment) == inst.n_vars and all(c.satisfied(assignment) for c in inst.constraints)
+            cost = inst.objective_cost(assignment) if feasible else None
+            optimal = feasible and cost == optima[instance_name] == row["optimal_cost"]
+            cert = row.get("certificate", {})
+            cert_ok = cert.get("lower_bound") == cert.get("upper_bound") == row.get("optimal_cost")
             solved += int(row["solved"] and feasible)
             exact_matches += int(optimal)
             cert_matches += int(optimal and cert_ok)
-            total_iterations += row["iterations"]
-            total_decisions += row["decision_calls"]
-            total_exact_hs += row["exact_hs_calls"]
-            sls_successes += row["sls_successes"]
+            total_iterations += row.get("iterations", 0)
+            total_decisions += row.get("decision_calls", 0)
+            total_exact_hs += row.get("exact_hs_calls", 0)
+            sls_successes += row.get("sls_successes", 0)
 
-        n = len(rows)
+        n = len(instances)
         score_results[variant] = {
             "solved_count": solved,
             "optimality_match_rate": exact_matches / n,
