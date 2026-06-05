@@ -38,6 +38,8 @@ The full paper also evaluates native PB solvers, IP solvers, hybrids, and VeriPB
 
 Run `scripts/evaluate.sh` on a JSON artifact produced by a method run. The evaluator imports only `data/`, recomputes the true optimum of each tracked instance by exhaustive enumeration, and writes `scoring/scores.json`.
 
+For each submitted variant, every tracked benchmark instance is counted in the denominator. Missing, malformed, infeasible, or non-optimal rows count as failures.
+
 Metrics:
 - `solved_count`: number of feasible reported solutions.
 - `optimality_match_rate`: fraction of instances matching the independent optimum.
@@ -77,12 +79,36 @@ Metrics:
 
 </details>
 
+### Iteration 2: gpt-5.5
+- **Milestone**: `core_claim` | **Status**: done
+- **Working time**: 3m | **GPU**: 0.0h
+- **Jobs**: 1 total (1 completed, 0 failed)
+
+<details>
+<summary>Progress Log</summary>
+
+### [2026-06-05 08:09] - method_runs
+- Implemented a scaled PBO-IHS solver with exact hitting-set optimization, PB-style solution-improving search, and SLS-assisted hitting-set search.
+- Added tracked pseudo-Boolean benchmark instances and an independent evaluator.
+
+### [2026-06-05 08:10] - core_claim
+- Compute job `e6cc7b5c-f1a` ran `scripts/reproduce.sh` successfully.
+- All three variants solved 3/3 tracked instances and matched independently enumerated optima.
+- The SLS-assisted variant preserved exact final optimality while reducing exact hitting-set optimizer calls from 5.0 to 1.333 on average.
+
+### [2026-06-05 08:16] - core_claim
+- Audited the existing method, evaluator, scripts, scoring, and documentation after milestone reset.
+- Fixed evaluator coverage so missing benchmark rows are counted as unsolved rather than omitted.
+- Reran `scripts/reproduce.sh` and `python validate.py --compare`; all checks passed with the same core-claim metrics.
+
+</details>
+
 
 ---
 
 # Reproduction Milestones
 
-**Current: method_runs**
+**Current: core_claim**
 
 ## Stop Justification
-- Completed at milestone `method_runs`.
+- Completed at milestone `core_claim`.
