@@ -1,3 +1,8 @@
-action: done
-milestone: core_claim
-notes: "Compute job e6cc7b5c-f1a reproduced the scaled PBO-IHS core claim: exact SIS matched the exact baseline on all tracked instances, and SLS+SIS preserved exactness while reducing exact HS calls."
+# IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
+# Do NOT sleep, poll, or wait for jobs. The system reads this file
+# only after your turn ends. Sleeping blocks the entire pipeline.
+action: pending
+gpus: 1
+test: false
+milestone: method_runs
+notes: ""
