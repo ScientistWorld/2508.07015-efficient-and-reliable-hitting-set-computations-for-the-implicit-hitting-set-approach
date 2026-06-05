@@ -1,0 +1,50 @@
+{
+  "experiments": {
+    "scaled_pbo_ihs_exactness": {
+      "description": "Scaled PBO-IHS benchmark: exact and PB-style hitting-set optimizers must solve all generated PBO instances and independently certify the optimum.",
+      "weight": 1.0,
+      "primary_metric": "optimality_match_rate",
+      "metrics": {
+        "solved_count": {"higher_is_better": true, "coefficient": 0.5},
+        "optimality_match_rate": {"higher_is_better": true, "coefficient": 1.0},
+        "certificate_accept_rate": {"higher_is_better": true, "coefficient": 1.0},
+        "avg_exact_hs_calls": {"higher_is_better": false, "coefficient": -0.2},
+        "avg_iterations": {"higher_is_better": false, "coefficient": -0.1},
+        "avg_decision_calls": {"higher_is_better": false, "coefficient": -0.1},
+        "sls_successes": {"higher_is_better": true, "coefficient": 0.1}
+      },
+      "results": {
+        "ip_exact": {
+          "type": "baseline",
+          "solved_count": 3,
+          "optimality_match_rate": 1.0,
+          "certificate_accept_rate": 1.0,
+          "avg_exact_hs_calls": 5.0,
+          "avg_iterations": 5.0,
+          "avg_decision_calls": 50.0,
+          "sls_successes": 0
+        },
+        "sis": {
+          "type": "proposed",
+          "solved_count": 3,
+          "optimality_match_rate": 1.0,
+          "certificate_accept_rate": 1.0,
+          "avg_exact_hs_calls": 5.0,
+          "avg_iterations": 5.0,
+          "avg_decision_calls": 50.0,
+          "sls_successes": 0
+        },
+        "sis_sls": {
+          "type": "proposed",
+          "solved_count": 3,
+          "optimality_match_rate": 1.0,
+          "certificate_accept_rate": 1.0,
+          "avg_exact_hs_calls": 1.3333333333333333,
+          "avg_iterations": 5.666666666666667,
+          "avg_decision_calls": 50.333333333333336,
+          "sls_successes": 13
+        }
+      }
+    }
+  }
+}
