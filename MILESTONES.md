@@ -1,6 +1,6 @@
 # Reproduction Milestones
 
-**Current: core_claim**
+**Current: method_runs**
 
 ## Progress Log
 
@@ -18,5 +18,11 @@
 - Confirmed `python validate.py --compare` passes.
 - Verified the official Zenodo artifact URLs used by `scripts/download.sh` return HTTP 200 and match the downloaded file sizes.
 
+### [2026-06-05 08:22] - method_runs
+- Performed a continuation audit from the reset `method_runs` state.
+- Found and fixed weak evaluation of self-reported algorithm metadata by adding method trace output and independent trace validation.
+- Reran `bash scripts/reproduce.sh && python validate.py --compare` locally; all scored variants still solve 3/3 instances with independently validated certificates.
+- Submitting a CPU validation job before restoring `core_claim` for the hardened evaluator.
+
 ## Stop Justification
-- Completed at milestone `core_claim`.
+- Not stopped; compute-node validation is pending for the hardened trace evaluator.

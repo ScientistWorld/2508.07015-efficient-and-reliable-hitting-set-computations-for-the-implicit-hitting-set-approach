@@ -28,6 +28,8 @@ This supports the scaled core claim: exact PB-style hitting-set optimization ins
 
 Iteration 3 audit: `python validate.py --compare` still passes, and the official Zenodo downloads in `scripts/download.sh` were rechecked with HTTP 200 responses on 2026-06-05.
 
+Continuation audit fix: the method artifact now includes per-iteration IHS traces. The evaluator no longer trusts summary counters alone; it independently verifies exact hitting-set optima for lower-bound updates, learned-core implication/falsification, SLS shortcut validity, and final certificate fields from the trace. `bash scripts/reproduce.sh && python validate.py --compare` passes after this hardening.
+
 ## Deviations From Paper
 
 The paper evaluates 1786 public PBO benchmark instances using native PB/IP solvers, Gurobi, SCIP, Roundingsat, and VeriPB. This first reproduction uses small tracked PBO instances and pure-Python exact decision procedures so the environment is runnable without commercial solvers or large native builds.
@@ -45,3 +47,4 @@ The method is scaled down, not replaced: it still alternates between hitting-set
 
 - The official solver stack depends on several native and optional commercial components. A pure-Python scaled implementation was used for the first reusable gym milestone.
 - Audit found that the first evaluator averaged only over rows present in an artifact. This has been fixed so partial submissions are penalized.
+- Continuation audit found that exact-HS call counts and certificate fields were self-reported. This has been fixed by trace validation in `eval/evaluate_pbo_ihs.py`.

@@ -1,8 +1,10 @@
 # Evaluation
 
-Run `scripts/evaluate.sh` on a JSON artifact produced by a method run. The evaluator imports only `data/`, recomputes the true optimum of each tracked instance by exhaustive enumeration, and writes `scoring/scores.json`.
+Run `scripts/evaluate.sh` on a JSON artifact produced by a method run. The evaluator imports only `data/`, recomputes the true optimum of each tracked instance by exhaustive enumeration, verifies the reported IHS trace, and writes `scoring/scores.json`.
 
-For each submitted variant, every tracked benchmark instance is counted in the denominator. Missing, malformed, infeasible, or non-optimal rows count as failures.
+For each submitted variant, every tracked benchmark instance is counted in the denominator. Missing, malformed, infeasible, non-optimal, or trace-invalid rows count as failures.
+
+For certificate acceptance, the evaluator independently checks each exact hitting-set lower-bound update by exhaustive optimization over the current core set, verifies every learned core is falsified by the rejected hitting-set assignment and implied by the original instance, and recomputes exact-HS and SLS counters from the trace rather than trusting reported summary fields.
 
 Metrics:
 - `solved_count`: number of feasible reported solutions.

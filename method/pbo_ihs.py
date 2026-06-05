@@ -27,6 +27,17 @@ class SolverStats:
     exact_hs_calls: int
     elapsed_sec: float
     certificate: dict
+    trace: list[dict]
+
+
+def constraint_to_dict(constraint: PBConstraint) -> dict:
+    return {
+        "terms": [
+            {"var": var, "positive": positive, "coeff": coeff}
+            for var, positive, coeff in constraint.terms
+        ],
+        "rhs": constraint.rhs,
+    }
 
 
 def objective_cost(weights: tuple[int, ...], obj_assignment: tuple[int, ...]) -> int:
@@ -160,16 +171,16 @@ def core_sls(cores: list[PBConstraint], weights: tuple[int, ...], ub: int, seed:
 def solve_hs(variant: str, cores: list[PBConstraint], weights: tuple[int, ...], lb: int, ub: int, seed: int, previous):
     if variant == "ip_exact":
         gamma, cost, checked = ip_exact_hs(cores, weights)
-        return gamma, cost, {"exact": True, "checked": checked, "sls": False}
+        return gamma, cost, {"exact": True, "checked": checked, "sls": False, "solution_cost": cost}
     if variant == "sis":
         gamma, cost, calls = sis_hs(cores, weights, ub)
-        return gamma, cost, {"exact": True, "sis_calls": calls, "sls": False}
+        return gamma, cost, {"exact": True, "sis_calls": calls, "sls": False, "solution_cost": cost}
     if variant == "sis_sls":
         gamma, cost, flips = core_sls(cores, weights, ub, seed, previous)
         if gamma is not None:
-            return gamma, lb, {"exact": False, "sls": True, "flips": flips}
+            return gamma, lb, {"exact": False, "sls": True, "flips": flips, "solution_cost": cost}
         gamma, cost, calls = sis_hs(cores, weights, ub)
-        return gamma, cost, {"exact": True, "sis_calls": calls, "sls": False, "flips": flips}
+        return gamma, cost, {"exact": True, "sis_calls": calls, "sls": False, "flips": flips, "solution_cost": cost}
     raise ValueError(f"unknown variant {variant}")
 
 
@@ -178,7 +189,7 @@ def pbo_ihs(inst: PBOInstance, variant: str, seed: int, max_iterations: int = 20
     first = full_solve(inst)
     decision_calls = 1
     if first is None:
-        return SolverStats(inst.name, variant, False, None, None, 0, 0, 0, decision_calls, 0, 0, 0.0, {})
+        return SolverStats(inst.name, variant, False, None, None, 0, 0, 0, decision_calls, 0, 0, 0.0, {}, [])
 
     best = first
     ub = inst.objective_cost(best)
@@ -189,33 +200,73 @@ def pbo_ihs(inst: PBOInstance, variant: str, seed: int, max_iterations: int = 20
     exact_hs_calls = 0
     sls_successes = 0
     previous = None
+    trace = []
 
     for iteration in range(1, max_iterations + 1):
+        event = {
+            "iteration": iteration,
+            "lb_before": lb,
+            "ub_before": ub,
+            "core_count_before": len(cores),
+        }
         gamma, new_lb, meta = solve_hs(variant, cores, inst.objective_weights, lb, ub, seed + iteration, previous)
         hs_calls += 1
         previous = gamma
+        event["hs"] = {
+            "gamma": list(gamma),
+            "cost": meta["solution_cost"],
+            "exact": meta["exact"],
+            "sls": bool(meta.get("sls")),
+            "optimizer": variant,
+            "details": {k: v for k, v in meta.items() if k not in {"solution_cost", "exact", "sls"}},
+        }
         if meta["exact"]:
             exact_hs_calls += 1
             lb = new_lb
         elif meta.get("sls"):
             sls_successes += 1
+        event["lb_after_hs"] = lb
         if ub == lb:
+            event["terminated_after_hs"] = True
+            event["ub_after"] = ub
+            event["lb_after"] = lb
+            event["best_after"] = list(best)
+            trace.append(event)
             break
 
         alpha = full_solve(inst, tuple(gamma))
         decision_calls += 1
         if alpha is not None:
             cost = inst.objective_cost(alpha)
+            event["decision"] = {
+                "sat": True,
+                "alpha": list(alpha),
+                "alpha_cost": cost,
+            }
             if cost < ub:
                 ub = cost
                 best = alpha
             if ub == lb:
+                event["terminated_after_decision"] = True
+                event["ub_after"] = ub
+                event["lb_after"] = lb
+                event["best_after"] = list(best)
+                trace.append(event)
                 break
         else:
             core, calls = extract_core(inst, gamma)
             decision_calls += calls
+            event["decision"] = {
+                "sat": False,
+                "new_core": constraint_to_dict(core),
+                "extraction_calls": calls,
+            }
             cores.append(core)
             learned += 1
+        event["ub_after"] = ub
+        event["lb_after"] = lb
+        event["best_after"] = list(best)
+        trace.append(event)
     else:
         raise RuntimeError(f"{variant} exceeded iteration limit on {inst.name}")
 
@@ -225,6 +276,8 @@ def pbo_ihs(inst: PBOInstance, variant: str, seed: int, max_iterations: int = 20
         "upper_bound": ub,
         "core_count": len(cores),
         "exact_hs_calls": exact_hs_calls,
+        "sls_successes": sls_successes,
+        "trace_events": len(trace),
         "optimality_reason": "ub_equals_lb",
     }
     return SolverStats(
@@ -241,6 +294,7 @@ def pbo_ihs(inst: PBOInstance, variant: str, seed: int, max_iterations: int = 20
         exact_hs_calls,
         elapsed,
         cert,
+        trace,
     )
 
 

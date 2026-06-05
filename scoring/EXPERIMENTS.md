@@ -6,4 +6,4 @@ This experiment checks whether each submitted method solves the same pseudo-Bool
 
 The comparison includes a direct exact hitting-set baseline, an exact pseudo-Boolean solution-improving hitting-set optimizer, and a variant that tries local-search repair before falling back to exact optimization.
 
-The experiment is intended to establish both benefit and reliability: methods should solve all instances, match the independent optimum, and expose bound information sufficient for the evaluator to accept the final optimality claim.
+The experiment is intended to establish both benefit and reliability: methods should solve all instances, match the independent optimum, and expose trace information sufficient for the evaluator to validate exact hitting-set lower bounds, learned cores, and the final optimality claim.
