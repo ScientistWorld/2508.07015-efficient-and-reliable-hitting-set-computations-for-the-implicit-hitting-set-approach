@@ -30,4 +30,4 @@
 - `sis_sls` preserved 3/3 optimality and certificate acceptance while reducing average exact hitting-set calls from 5.0 to 1.333.
 
 ## Stop Justification
-- Completed at milestone `core_claim` with compute-node validation of the hardened trace evaluator.
+- Completed at milestone `core_claim`.

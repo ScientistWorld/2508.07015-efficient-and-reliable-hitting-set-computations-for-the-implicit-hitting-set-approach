@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: submit
+action: done
 gpus: 0
-test: true
-milestone: method_runs
-notes: "CPU validation of the hardened trace-validated PBO-IHS reproduction; runs scripts/reproduce.sh and python validate.py --compare before restoring core_claim."
+test: false
+milestone: core_claim
+notes: "Job f0c9a696-205 validated the hardened trace-checked PBO-IHS reproduction in the managed container; all variants solve 3/3 tracked instances with accepted certificates."
