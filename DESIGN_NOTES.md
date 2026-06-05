@@ -23,7 +23,7 @@
 - Job `2024c07b-8ed` completed successfully and produced all original train/test metrics for `ip_exact`, `sis`, and `sis_sls`.
 - Job `ac5b4a95-67e` completed successfully after adding `exact_hs_call_fraction`; both `scoring/scores_train.json` and `scoring/scores_test.json` now include every active metric from `scoring/reference.json`.
 - Exactness-style metrics are saturated for the current valid methods: `solved_count = 3`, `optimality_match_rate = 1.0`, `certificate_accept_rate = 1.0`, and `selected_trace_accept_rate = 1.0` on both slices. These remain useful as constraints against broken shortcut methods.
-- Efficiency metrics provide the ranking signal: `sis_sls` reduces `exact_hs_call_fraction` from `1.0` to `0.3` on train and to `0.14285714285714285` on test, while preserving exactness and certificate validity.
+- `avg_exact_hs_calls` is the primary ranking metric because it is present in the original reference results, differentiates methods on the visible train slice, and differs between train and test while measuring the paper's exact-solver-reduction claim. `exact_hs_call_fraction` remains as a normalized supporting metric; `sis_sls` reduces it from `1.0` to `0.3` on train and to `0.14285714285714285` on test, while preserving exactness and certificate validity.
 
 ## Runtime Concerns For Next Iteration
 

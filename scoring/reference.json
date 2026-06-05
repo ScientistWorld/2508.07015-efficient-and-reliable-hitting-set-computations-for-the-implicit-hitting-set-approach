@@ -3,7 +3,7 @@
     "scaled_pbo_ihs_exactness": {
       "description": "Scaled PBO-IHS benchmark: exact and PB-style hitting-set optimizers must solve all generated PBO instances and independently certify the optimum.",
       "weight": 1.0,
-      "primary_metric": "optimality_match_rate",
+      "primary_metric": "avg_exact_hs_calls",
       "metrics": {
         "solved_count": {
           "higher_is_better": true,

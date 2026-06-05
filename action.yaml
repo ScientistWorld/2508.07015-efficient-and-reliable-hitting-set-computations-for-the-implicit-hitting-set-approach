@@ -3,4 +3,4 @@ action: done
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Odd/even trace-event split; 27 train metric values, 27 test metric values; exactness constraints saturated for valid methods, while sis_sls reduces exact_hs_call_fraction from 1.0 to 0.3 train and 0.14285714285714285 test."
+notes: "Odd/even trace-event split; 27 train metric values, 27 test metric values; primary avg_exact_hs_calls differentiates train methods and train/test slices while exactness remains a constraint."
