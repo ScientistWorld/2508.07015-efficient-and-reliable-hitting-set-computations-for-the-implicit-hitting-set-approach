@@ -4,4 +4,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Run evaluate_train.sh and evaluate_test.sh over /home/user/checkpoints to populate split scores."
+notes: "Re-run split scoring with exact_hs_call_fraction added as a hardware-independent efficiency metric."

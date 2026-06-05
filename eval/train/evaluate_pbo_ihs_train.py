@@ -275,6 +275,9 @@ def evaluate(results_path: Path, output_path: Path) -> dict:
             "selected_trace_accept_rate": (
                 trace_events_valid / trace_events_checked if trace_events_checked else 0.0
             ),
+            "exact_hs_call_fraction": (
+                total_exact_hs / total_iterations if total_iterations else 0.0
+            ),
             "avg_iterations": total_iterations / n,
             "avg_decision_calls": total_decisions / n,
             "avg_exact_hs_calls": total_exact_hs / n,

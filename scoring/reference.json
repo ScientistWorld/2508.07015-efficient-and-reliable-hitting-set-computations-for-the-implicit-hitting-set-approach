@@ -25,6 +25,11 @@
           "coefficient": 0.6,
           "description": "Fraction of visible or held-out trace events whose hitting-set, decision, bound-update, and learned-core fields validate independently."
         },
+        "exact_hs_call_fraction": {
+          "higher_is_better": false,
+          "coefficient": -0.4,
+          "description": "Fraction of selected IHS iterations that required an exact hitting-set solve, measuring exact-solver dependence independently of hardware speed."
+        },
         "avg_exact_hs_calls": {
           "higher_is_better": false,
           "coefficient": -0.2,
