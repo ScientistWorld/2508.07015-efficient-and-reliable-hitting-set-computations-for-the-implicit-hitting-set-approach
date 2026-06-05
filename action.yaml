@@ -1,9 +1,7 @@
-# This iteration writes files only — do NOT submit compute jobs.
-# Once you set action to 'done', STOP immediately.
-# Do NOT sleep, poll, or wait. The system reads this file
-# only after your turn ends.
-action: done
+# The system reads this file after the turn ends.
+# Do NOT sleep, poll, or wait after setting action: submit.
+action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Improvements: added selected_trace_accept_rate, removed test dependency on train scores, completed metric descriptions. Notes: see DESIGN_NOTES.md."
+notes: "Run evaluate_train.sh and evaluate_test.sh over /home/user/checkpoints to populate split scores."
