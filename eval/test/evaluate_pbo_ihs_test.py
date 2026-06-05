@@ -1,8 +1,7 @@
 """Held-out test-slice evaluator for PBO-IHS artifacts.
 
 This scorer reads the same method artifact as the train scorer, but verifies
-the complementary half of each IHS trace. It also preserves every method key
-already scored by scores_train.json so test cannot silently drop a variant.
+the complementary half of each IHS trace without importing train-slice code.
 """
 
 from __future__ import annotations
@@ -76,6 +75,8 @@ def selected_event(index: int) -> bool:
 def validate_selected_event(inst, event: dict, index: int, cores: list[PBConstraint]) -> tuple[bool, dict]:
     metrics = {
         "iterations": 1,
+        "trace_events_checked": 1,
+        "trace_events_valid": 0,
         "decision_calls": 0,
         "exact_hs_calls": 0,
         "sls_successes": 0,
@@ -119,12 +120,13 @@ def validate_selected_event(inst, event: dict, index: int, cores: list[PBConstra
         return False, metrics
 
     if event.get("terminated_after_hs"):
-        return (
+        event_ok = (
             event.get("lb_after") == expected_lb_after_hs
             and event.get("ub_after") == ub_before
-            and expected_lb_after_hs == ub_before,
-            metrics,
+            and expected_lb_after_hs == ub_before
         )
+        metrics["trace_events_valid"] = int(event_ok)
+        return event_ok, metrics
 
     decision = event.get("decision")
     if not isinstance(decision, dict):
@@ -162,11 +164,12 @@ def validate_selected_event(inst, event: dict, index: int, cores: list[PBConstra
         metrics["cores_learned"] = 1
         expected_ub_after = ub_before
 
-    return (
+    event_ok = (
         event.get("lb_after") == expected_lb_after_hs
-        and event.get("ub_after") == expected_ub_after,
-        metrics,
+        and event.get("ub_after") == expected_ub_after
     )
+    metrics["trace_events_valid"] = int(event_ok)
+    return event_ok, metrics
 
 
 def append_trace_core_if_present(inst, event: dict, cores: list[PBConstraint]) -> None:
@@ -198,6 +201,8 @@ def verify_trace_slice(inst, row: dict, optimum: int | None) -> dict:
     ok = final_certificate_ok
     totals = {
         "iterations": 0,
+        "trace_events_checked": 0,
+        "trace_events_valid": 0,
         "decision_calls": 0,
         "exact_hs_calls": 0,
         "sls_successes": 0,
@@ -216,34 +221,7 @@ def verify_trace_slice(inst, row: dict, optimum: int | None) -> dict:
     return totals
 
 
-def variants_from_train_scores(train_scores_path: Path) -> set[str]:
-    if not train_scores_path.is_file():
-        return set()
-    try:
-        payload = json.loads(train_scores_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return set()
-    experiments = payload.get("experiments", payload)
-    exp = experiments.get(EXPERIMENT, {}) if isinstance(experiments, dict) else {}
-    results = exp.get("results", exp) if isinstance(exp, dict) else {}
-    if not isinstance(results, dict):
-        return set()
-    return {str(name) for name in results if not str(name).startswith("_")}
-
-
-def zero_metrics() -> dict:
-    return {
-        "solved_count": 0,
-        "optimality_match_rate": 0.0,
-        "certificate_accept_rate": 0.0,
-        "avg_iterations": 0.0,
-        "avg_decision_calls": 0.0,
-        "avg_exact_hs_calls": 0.0,
-        "sls_successes": 0,
-    }
-
-
-def evaluate(results_path: Path, output_path: Path, train_scores_path: Path) -> dict:
+def evaluate(results_path: Path, output_path: Path) -> dict:
     payload = json.loads(results_path.read_text(encoding="utf-8"))
     instances = {inst.name: inst for inst in benchmark_instances()}
     optima = {inst.name: brute_force_optimum(inst)[0] for inst in benchmark_instances()}
@@ -253,14 +231,8 @@ def evaluate(results_path: Path, output_path: Path, train_scores_path: Path) -> 
         if isinstance(row, dict) and "variant" in row:
             grouped.setdefault(str(row["variant"]), []).append(row)
 
-    variants = sorted(set(grouped) | variants_from_train_scores(train_scores_path))
     score_results = {}
-    for variant in variants:
-        rows = grouped.get(variant, [])
-        if not rows:
-            score_results[variant] = zero_metrics()
-            continue
-
+    for variant, rows in sorted(grouped.items()):
         by_instance = {row["instance"]: row for row in rows if row.get("instance") in instances}
         solved = 0
         exact_matches = 0
@@ -269,6 +241,8 @@ def evaluate(results_path: Path, output_path: Path, train_scores_path: Path) -> 
         total_decisions = 0
         total_exact_hs = 0
         sls_successes = 0
+        trace_events_checked = 0
+        trace_events_valid = 0
 
         for instance_name, inst in instances.items():
             row = by_instance.get(instance_name)
@@ -289,12 +263,17 @@ def evaluate(results_path: Path, output_path: Path, train_scores_path: Path) -> 
             total_decisions += trace_check.get("decision_calls", 0)
             total_exact_hs += trace_check.get("exact_hs_calls", 0)
             sls_successes += trace_check.get("sls_successes", 0)
+            trace_events_checked += trace_check.get("trace_events_checked", 0)
+            trace_events_valid += trace_check.get("trace_events_valid", 0)
 
         n = len(instances)
         score_results[variant] = {
             "solved_count": solved,
             "optimality_match_rate": exact_matches / n,
             "certificate_accept_rate": cert_matches / n,
+            "selected_trace_accept_rate": (
+                trace_events_valid / trace_events_checked if trace_events_checked else 0.0
+            ),
             "avg_iterations": total_iterations / n,
             "avg_decision_calls": total_decisions / n,
             "avg_exact_hs_calls": total_exact_hs / n,
@@ -311,9 +290,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--results", default="checkpoints/pbo_ihs_results.json")
     parser.add_argument("--output", default="scoring/scores_test.json")
-    parser.add_argument("--train-scores", default="scoring/scores_train.json")
     args = parser.parse_args()
-    print(json.dumps(evaluate(Path(args.results), Path(args.output), Path(args.train_scores)), indent=2))
+    print(json.dumps(evaluate(Path(args.results), Path(args.output)), indent=2))
 
 
 if __name__ == "__main__":

@@ -76,6 +76,8 @@ def selected_event(index: int) -> bool:
 def validate_selected_event(inst, event: dict, index: int, cores: list[PBConstraint]) -> tuple[bool, dict]:
     metrics = {
         "iterations": 1,
+        "trace_events_checked": 1,
+        "trace_events_valid": 0,
         "decision_calls": 0,
         "exact_hs_calls": 0,
         "sls_successes": 0,
@@ -119,12 +121,13 @@ def validate_selected_event(inst, event: dict, index: int, cores: list[PBConstra
         return False, metrics
 
     if event.get("terminated_after_hs"):
-        return (
+        event_ok = (
             event.get("lb_after") == expected_lb_after_hs
             and event.get("ub_after") == ub_before
-            and expected_lb_after_hs == ub_before,
-            metrics,
+            and expected_lb_after_hs == ub_before
         )
+        metrics["trace_events_valid"] = int(event_ok)
+        return event_ok, metrics
 
     decision = event.get("decision")
     if not isinstance(decision, dict):
@@ -162,11 +165,12 @@ def validate_selected_event(inst, event: dict, index: int, cores: list[PBConstra
         metrics["cores_learned"] = 1
         expected_ub_after = ub_before
 
-    return (
+    event_ok = (
         event.get("lb_after") == expected_lb_after_hs
-        and event.get("ub_after") == expected_ub_after,
-        metrics,
+        and event.get("ub_after") == expected_ub_after
     )
+    metrics["trace_events_valid"] = int(event_ok)
+    return event_ok, metrics
 
 
 def append_trace_core_if_present(inst, event: dict, cores: list[PBConstraint]) -> None:
@@ -198,6 +202,8 @@ def verify_trace_slice(inst, row: dict, optimum: int | None) -> dict:
     ok = final_certificate_ok
     totals = {
         "iterations": 0,
+        "trace_events_checked": 0,
+        "trace_events_valid": 0,
         "decision_calls": 0,
         "exact_hs_calls": 0,
         "sls_successes": 0,
@@ -236,6 +242,8 @@ def evaluate(results_path: Path, output_path: Path) -> dict:
         total_decisions = 0
         total_exact_hs = 0
         sls_successes = 0
+        trace_events_checked = 0
+        trace_events_valid = 0
 
         for instance_name, inst in instances.items():
             row = by_instance.get(instance_name)
@@ -256,12 +264,17 @@ def evaluate(results_path: Path, output_path: Path) -> dict:
             total_decisions += trace_check.get("decision_calls", 0)
             total_exact_hs += trace_check.get("exact_hs_calls", 0)
             sls_successes += trace_check.get("sls_successes", 0)
+            trace_events_checked += trace_check.get("trace_events_checked", 0)
+            trace_events_valid += trace_check.get("trace_events_valid", 0)
 
         n = len(instances)
         score_results[variant] = {
             "solved_count": solved,
             "optimality_match_rate": exact_matches / n,
             "certificate_accept_rate": cert_matches / n,
+            "selected_trace_accept_rate": (
+                trace_events_valid / trace_events_checked if trace_events_checked else 0.0
+            ),
             "avg_iterations": total_iterations / n,
             "avg_decision_calls": total_decisions / n,
             "avg_exact_hs_calls": total_exact_hs / n,

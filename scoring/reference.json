@@ -5,13 +5,46 @@
       "weight": 1.0,
       "primary_metric": "optimality_match_rate",
       "metrics": {
-        "solved_count": {"higher_is_better": true, "coefficient": 0.5},
-        "optimality_match_rate": {"higher_is_better": true, "coefficient": 1.0},
-        "certificate_accept_rate": {"higher_is_better": true, "coefficient": 1.0},
-        "avg_exact_hs_calls": {"higher_is_better": false, "coefficient": -0.2},
-        "avg_iterations": {"higher_is_better": false, "coefficient": -0.1},
-        "avg_decision_calls": {"higher_is_better": false, "coefficient": -0.1},
-        "sls_successes": {"higher_is_better": true, "coefficient": 0.1}
+        "solved_count": {
+          "higher_is_better": true,
+          "coefficient": 0.5,
+          "description": "Counts tracked instances with a feasible reported solution, so methods cannot hide hard cases by omitting rows."
+        },
+        "optimality_match_rate": {
+          "higher_is_better": true,
+          "coefficient": 1.0,
+          "description": "Fraction of tracked instances whose reported objective value matches an independently computed optimum."
+        },
+        "certificate_accept_rate": {
+          "higher_is_better": true,
+          "coefficient": 1.0,
+          "description": "Fraction of tracked instances with a valid final optimality certificate and accepted selected IHS trace events."
+        },
+        "selected_trace_accept_rate": {
+          "higher_is_better": true,
+          "coefficient": 0.6,
+          "description": "Fraction of visible or held-out trace events whose hitting-set, decision, bound-update, and learned-core fields validate independently."
+        },
+        "avg_exact_hs_calls": {
+          "higher_is_better": false,
+          "coefficient": -0.2,
+          "description": "Average number of selected exact hitting-set calls, penalizing expensive exact optimization when exactness is maintained."
+        },
+        "avg_iterations": {
+          "higher_is_better": false,
+          "coefficient": -0.1,
+          "description": "Average selected IHS iterations, used as a machine-independent efficiency proxy."
+        },
+        "avg_decision_calls": {
+          "higher_is_better": false,
+          "coefficient": -0.1,
+          "description": "Average selected feasibility and core-extraction decision calls, used as a solver-work constraint."
+        },
+        "sls_successes": {
+          "higher_is_better": true,
+          "coefficient": 0.1,
+          "description": "Counts selected local-search hitting-set successes that produce a valid improving candidate before exact fallback."
+        }
       },
       "results": {
         "ip_exact": {
