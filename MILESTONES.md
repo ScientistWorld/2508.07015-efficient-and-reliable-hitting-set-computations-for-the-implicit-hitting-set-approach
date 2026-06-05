@@ -1,6 +1,6 @@
 # Reproduction Milestones
 
-**Current: method_runs**
+**Current: core_claim**
 
 ## Progress Log
 
@@ -24,5 +24,10 @@
 - Reran `bash scripts/reproduce.sh && python validate.py --compare` locally; all scored variants still solve 3/3 instances with independently validated certificates.
 - Submitting a CPU validation job before restoring `core_claim` for the hardened evaluator.
 
+### [2026-06-05 08:25] - core_claim
+- Compute job `f0c9a696-205` ran `scripts/run.sh` successfully with exit code 0.
+- The hardened evaluator accepted the trace-validated certificates for all three variants.
+- `sis_sls` preserved 3/3 optimality and certificate acceptance while reducing average exact hitting-set calls from 5.0 to 1.333.
+
 ## Stop Justification
-- Not stopped; compute-node validation is pending for the hardened trace evaluator.
+- Completed at milestone `core_claim` with compute-node validation of the hardened trace evaluator.

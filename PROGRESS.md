@@ -30,6 +30,14 @@ Iteration 3 audit: `python validate.py --compare` still passes, and the official
 
 Continuation audit fix: the method artifact now includes per-iteration IHS traces. The evaluator no longer trusts summary counters alone; it independently verifies exact hitting-set optima for lower-bound updates, learned-core implication/falsification, SLS shortcut validity, and final certificate fields from the trace. `bash scripts/reproduce.sh && python validate.py --compare` passes after this hardening.
 
+Compute job `f0c9a696-205` completed successfully with exit code 0 after the trace hardening. It ran `scripts/run.sh`, regenerated `checkpoints/pbo_ihs_results.json`, wrote `scoring/scores.json`, and passed `python validate.py --compare` inside the managed Apptainer environment.
+
+Trace-validated compute-node results:
+
+- `ip_exact`: solved 3/3, optimality match 1.0, certificate accept 1.0, average exact HS calls 5.0.
+- `sis`: solved 3/3, optimality match 1.0, certificate accept 1.0, average exact HS calls 5.0.
+- `sis_sls`: solved 3/3, optimality match 1.0, certificate accept 1.0, average exact HS calls 1.333, SLS successes 13.
+
 ## Deviations From Paper
 
 The paper evaluates 1786 public PBO benchmark instances using native PB/IP solvers, Gurobi, SCIP, Roundingsat, and VeriPB. This first reproduction uses small tracked PBO instances and pure-Python exact decision procedures so the environment is runnable without commercial solvers or large native builds.
