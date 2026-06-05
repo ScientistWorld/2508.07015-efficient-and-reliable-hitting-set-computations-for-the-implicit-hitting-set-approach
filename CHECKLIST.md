@@ -7,5 +7,5 @@
 - [x] Implement independent evaluator.
 - [x] Define scoring targets and constraints.
 - [x] Run local smoke test.
-- [ ] Run compute-node reproduction job.
-- [ ] Update scores and milestone from job results.
+- [x] Run compute-node reproduction job.
+- [x] Update scores and milestone from job results.
