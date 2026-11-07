@@ -1,0 +1,7 @@
+{
+  "candidate_inputs": "visible method, visible data and visible train interface only",
+  "test": "bash scripts/evaluate_test.sh (no arguments), separate process",
+  "cleanup": "restore every mutated file after each case",
+  "report_anchor": "initial scoring/scores_test.json",
+  "rank": "sum(weight * coefficient * (candidate_metric - test_reference_metric))"
+}
