@@ -1,0 +1,1174 @@
+{
+  "results": [
+    {
+      "instance": "warehouse_cover",
+      "variant": "sis_sls",
+      "solved": true,
+      "optimal_cost": 9,
+      "best_assignment": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "iterations": 5,
+      "cores_learned": 4,
+      "hs_calls": 5,
+      "decision_calls": 33,
+      "sls_successes": 3,
+      "exact_hs_calls": 2,
+      "elapsed_sec": 0.2000782350078225,
+      "certificate": {
+        "lower_bound": 9,
+        "upper_bound": 9,
+        "core_count": 5,
+        "exact_hs_calls": 2,
+        "sls_successes": 3,
+        "trace_events": 5,
+        "optimality_reason": "ub_equals_lb"
+      },
+      "trace": [
+        {
+          "iteration": 1,
+          "lb_before": -1,
+          "ub_before": 9,
+          "core_count_before": 1,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 2,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1120
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 1,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 3,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 4,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 7
+          },
+          "ub_after": 9,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "iteration": 2,
+          "lb_before": -1,
+          "ub_before": 9,
+          "core_count_before": 2,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0
+            ],
+            "cost": 6,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1120
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 0,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 5,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 6,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 7
+          },
+          "ub_after": 9,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "iteration": 3,
+          "lb_before": -1,
+          "ub_before": 9,
+          "core_count_before": 3,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              1
+            ],
+            "cost": 7,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1120
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 0,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 1,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 2,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 7
+          },
+          "ub_after": 9,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "iteration": 4,
+          "lb_before": -1,
+          "ub_before": 9,
+          "core_count_before": 4,
+          "hs": {
+            "gamma": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "cost": 8,
+            "exact": true,
+            "sls": false,
+            "optimizer": "sis_sls",
+            "details": {
+              "sis_calls": 2,
+              "flips": 1120
+            }
+          },
+          "lb_after_hs": 8,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 0,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 4,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 7
+          },
+          "ub_after": 9,
+          "lb_after": 8,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "iteration": 5,
+          "lb_before": 8,
+          "ub_before": 9,
+          "core_count_before": 5,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              1
+            ],
+            "cost": 9,
+            "exact": true,
+            "sls": false,
+            "optimizer": "sis_sls",
+            "details": {
+              "sis_calls": 1,
+              "flips": 1120
+            }
+          },
+          "lb_after_hs": 9,
+          "terminated_after_hs": true,
+          "ub_after": 9,
+          "lb_after": 9,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "instance": "repair_schedule",
+      "variant": "sis_sls",
+      "solved": true,
+      "optimal_cost": 9,
+      "best_assignment": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "iterations": 5,
+      "cores_learned": 3,
+      "hs_calls": 5,
+      "decision_calls": 29,
+      "sls_successes": 4,
+      "exact_hs_calls": 1,
+      "elapsed_sec": 0.2975816889666021,
+      "certificate": {
+        "lower_bound": 9,
+        "upper_bound": 9,
+        "core_count": 5,
+        "exact_hs_calls": 1,
+        "sls_successes": 4,
+        "trace_events": 5,
+        "optimality_reason": "ub_equals_lb"
+      },
+      "trace": [
+        {
+          "iteration": 1,
+          "lb_before": -1,
+          "ub_before": 13,
+          "core_count_before": 2,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 3,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1280
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 5,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 6,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 7,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 8
+          },
+          "ub_after": 13,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "iteration": 2,
+          "lb_before": -1,
+          "ub_before": 13,
+          "core_count_before": 3,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ],
+            "cost": 7,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1280
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 0,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 1,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 2,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 8
+          },
+          "ub_after": 13,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "iteration": 3,
+          "lb_before": -1,
+          "ub_before": 13,
+          "core_count_before": 4,
+          "hs": {
+            "gamma": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "cost": 8,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1280
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 2,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 3,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 4,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 8
+          },
+          "ub_after": 13,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "iteration": 4,
+          "lb_before": -1,
+          "ub_before": 13,
+          "core_count_before": 5,
+          "hs": {
+            "gamma": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ],
+            "cost": 9,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1280
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": true,
+            "alpha": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              1
+            ],
+            "alpha_cost": 9
+          },
+          "ub_after": 9,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "iteration": 5,
+          "lb_before": -1,
+          "ub_before": 9,
+          "core_count_before": 5,
+          "hs": {
+            "gamma": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ],
+            "cost": 9,
+            "exact": true,
+            "sls": false,
+            "optimizer": "sis_sls",
+            "details": {
+              "sis_calls": 1,
+              "flips": 1280
+            }
+          },
+          "lb_after_hs": 9,
+          "terminated_after_hs": true,
+          "ub_after": 9,
+          "lb_after": 9,
+          "best_after": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "instance": "network_activation",
+      "variant": "sis_sls",
+      "solved": true,
+      "optimal_cost": 12,
+      "best_assignment": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "iterations": 7,
+      "cores_learned": 5,
+      "hs_calls": 7,
+      "decision_calls": 53,
+      "sls_successes": 6,
+      "exact_hs_calls": 1,
+      "elapsed_sec": 0.8278875710675493,
+      "certificate": {
+        "lower_bound": 12,
+        "upper_bound": 12,
+        "core_count": 6,
+        "exact_hs_calls": 1,
+        "sls_successes": 6,
+        "trace_events": 7,
+        "optimality_reason": "ub_equals_lb"
+      },
+      "trace": [
+        {
+          "iteration": 1,
+          "lb_before": -1,
+          "ub_before": 15,
+          "core_count_before": 1,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1440
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 6,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 7,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 8,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 9
+          },
+          "ub_after": 15,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "iteration": 2,
+          "lb_before": -1,
+          "ub_before": 15,
+          "core_count_before": 2,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            "cost": 5,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1440
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 3,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 4,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 5,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 9
+          },
+          "ub_after": 15,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "iteration": 3,
+          "lb_before": -1,
+          "ub_before": 15,
+          "core_count_before": 3,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              0
+            ],
+            "cost": 7,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1440
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 0,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 3,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 6,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 9
+          },
+          "ub_after": 15,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "iteration": 4,
+          "lb_before": -1,
+          "ub_before": 15,
+          "core_count_before": 4,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            "cost": 8,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1440
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 0,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 1,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 5,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 6,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 9
+          },
+          "ub_after": 15,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "iteration": 5,
+          "lb_before": -1,
+          "ub_before": 15,
+          "core_count_before": 5,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0
+            ],
+            "cost": 10,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1440
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": false,
+            "new_core": {
+              "terms": [
+                {
+                  "var": 0,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 1,
+                  "positive": true,
+                  "coeff": 1
+                },
+                {
+                  "var": 2,
+                  "positive": true,
+                  "coeff": 1
+                }
+              ],
+              "rhs": 1
+            },
+            "extraction_calls": 9
+          },
+          "ub_after": 15,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "iteration": 6,
+          "lb_before": -1,
+          "ub_before": 15,
+          "core_count_before": 6,
+          "hs": {
+            "gamma": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0
+            ],
+            "cost": 14,
+            "exact": false,
+            "sls": true,
+            "optimizer": "sis_sls",
+            "details": {
+              "flips": 1440
+            }
+          },
+          "lb_after_hs": -1,
+          "decision": {
+            "sat": true,
+            "alpha": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              1
+            ],
+            "alpha_cost": 14
+          },
+          "ub_after": 14,
+          "lb_after": -1,
+          "best_after": [
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "iteration": 7,
+          "lb_before": -1,
+          "ub_before": 14,
+          "core_count_before": 6,
+          "hs": {
+            "gamma": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            "cost": 12,
+            "exact": true,
+            "sls": false,
+            "optimizer": "sis_sls",
+            "details": {
+              "sis_calls": 3,
+              "flips": 1440
+            }
+          },
+          "lb_after_hs": 12,
+          "decision": {
+            "sat": true,
+            "alpha": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "alpha_cost": 12
+          },
+          "terminated_after_decision": true,
+          "ub_after": 12,
+          "lb_after": 12,
+          "best_after": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    }
+  ]
+}

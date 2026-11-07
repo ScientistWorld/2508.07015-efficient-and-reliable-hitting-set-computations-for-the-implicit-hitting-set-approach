@@ -1,0 +1,10 @@
+{
+  "case": "shortcut_failing_repeated_sls",
+  "ok": true,
+  "elapsed_seconds": 0.9371391859604046,
+  "test_command": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "persistent_input": "checkpoints/pbo_ihs_results.json"
+}

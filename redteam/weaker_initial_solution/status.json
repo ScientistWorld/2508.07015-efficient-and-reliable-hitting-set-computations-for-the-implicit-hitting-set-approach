@@ -1,0 +1,10 @@
+{
+  "case": "weaker_initial_solution",
+  "ok": true,
+  "elapsed_seconds": 1.4510875720297918,
+  "test_command": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "persistent_input": "checkpoints/pbo_ihs_results.json"
+}

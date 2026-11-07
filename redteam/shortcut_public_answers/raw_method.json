@@ -1,0 +1,80 @@
+{
+  "results": [
+    {
+      "instance": "warehouse_cover",
+      "variant": "sis_sls",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "optimal_cost": 9,
+      "trace": [],
+      "certificate": {
+        "lower_bound": 9,
+        "upper_bound": 9,
+        "trace_events": 0
+      }
+    },
+    {
+      "instance": "repair_schedule",
+      "variant": "sis_sls",
+      "solved": true,
+      "best_assignment": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "optimal_cost": 9,
+      "trace": [],
+      "certificate": {
+        "lower_bound": 9,
+        "upper_bound": 9,
+        "trace_events": 0
+      }
+    },
+    {
+      "instance": "network_activation",
+      "variant": "sis_sls",
+      "solved": true,
+      "best_assignment": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "optimal_cost": 12,
+      "trace": [],
+      "certificate": {
+        "lower_bound": 12,
+        "upper_bound": 12,
+        "trace_events": 0
+      }
+    }
+  ]
+}

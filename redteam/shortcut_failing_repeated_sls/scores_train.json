@@ -1,0 +1,42 @@
+{
+  "slice": "train",
+  "experiments": {
+    "scaled_pbo_ihs_exactness": {
+      "results": {
+        "ip_exact": {
+          "solved_count": 3,
+          "optimality_match_rate": 1.0,
+          "certificate_accept_rate": 1.0,
+          "selected_trace_accept_rate": 1.0,
+          "exact_hs_call_fraction": 1.0,
+          "avg_iterations": 2.6666666666666665,
+          "avg_decision_calls": 28.333333333333332,
+          "avg_exact_hs_calls": 2.6666666666666665,
+          "sls_successes": 0
+        },
+        "sis": {
+          "solved_count": 3,
+          "optimality_match_rate": 1.0,
+          "certificate_accept_rate": 1.0,
+          "selected_trace_accept_rate": 1.0,
+          "exact_hs_call_fraction": 1.0,
+          "avg_iterations": 2.6666666666666665,
+          "avg_decision_calls": 28.333333333333332,
+          "avg_exact_hs_calls": 2.6666666666666665,
+          "sls_successes": 0
+        },
+        "sis_sls": {
+          "solved_count": 0,
+          "optimality_match_rate": 0.0,
+          "certificate_accept_rate": 0.0,
+          "selected_trace_accept_rate": 1.0,
+          "exact_hs_call_fraction": 0.0,
+          "avg_iterations": 100.0,
+          "avg_decision_calls": 100.0,
+          "avg_exact_hs_calls": 0.0,
+          "sls_successes": 300
+        }
+      }
+    }
+  }
+}

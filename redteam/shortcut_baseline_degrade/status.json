@@ -1,0 +1,10 @@
+{
+  "case": "shortcut_baseline_degrade",
+  "ok": true,
+  "elapsed_seconds": 0.8479396919719875,
+  "test_command": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "persistent_input": "checkpoints/pbo_ihs_results.json"
+}

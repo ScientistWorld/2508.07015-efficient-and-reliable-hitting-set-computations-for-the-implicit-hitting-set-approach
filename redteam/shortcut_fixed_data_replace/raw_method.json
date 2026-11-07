@@ -1,0 +1,691 @@
+{
+  "results": [
+    {
+      "instance": "warehouse_cover",
+      "variant": "ip_exact",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    },
+    {
+      "instance": "warehouse_cover",
+      "variant": "sis",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    },
+    {
+      "instance": "warehouse_cover",
+      "variant": "sis_sls",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    },
+    {
+      "instance": "repair_schedule",
+      "variant": "ip_exact",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    },
+    {
+      "instance": "repair_schedule",
+      "variant": "sis",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    },
+    {
+      "instance": "repair_schedule",
+      "variant": "sis_sls",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    },
+    {
+      "instance": "network_activation",
+      "variant": "ip_exact",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    },
+    {
+      "instance": "network_activation",
+      "variant": "sis",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    },
+    {
+      "instance": "network_activation",
+      "variant": "sis_sls",
+      "solved": true,
+      "best_assignment": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "optimal_cost": 0,
+      "trace": [
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 1
+        },
+        {
+          "core_count_before": 0,
+          "lb_before": -1,
+          "ub_before": 0,
+          "hs": {
+            "gamma": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "cost": 0,
+            "exact": true,
+            "sls": false
+          },
+          "lb_after_hs": 0,
+          "terminated_after_hs": true,
+          "lb_after": 0,
+          "ub_after": 0,
+          "iteration": 2
+        }
+      ],
+      "certificate": {
+        "lower_bound": 0,
+        "upper_bound": 0,
+        "trace_events": 2
+      }
+    }
+  ]
+}

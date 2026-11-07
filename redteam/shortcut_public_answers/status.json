@@ -1,0 +1,10 @@
+{
+  "case": "shortcut_public_answers",
+  "ok": true,
+  "elapsed_seconds": 1.6034313749987632,
+  "test_command": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "persistent_input": "checkpoints/pbo_ihs_results.json"
+}

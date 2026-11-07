@@ -1,0 +1,10 @@
+{
+  "case": "shortcut_summary_forgery",
+  "ok": true,
+  "elapsed_seconds": 1.6517819330329075,
+  "test_command": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "persistent_input": "checkpoints/pbo_ihs_results.json"
+}

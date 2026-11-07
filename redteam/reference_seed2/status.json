@@ -1,0 +1,10 @@
+{
+  "case": "reference_seed2",
+  "ok": true,
+  "elapsed_seconds": 3.813538479967974,
+  "test_command": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "persistent_input": "checkpoints/pbo_ihs_results.json"
+}
