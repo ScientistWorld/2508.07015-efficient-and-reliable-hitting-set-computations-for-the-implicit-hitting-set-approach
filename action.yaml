@@ -1,8 +1,2 @@
-# Once you set action to 'submit' or 'done', STOP immediately.
-# Do NOT sleep, poll, or wait for jobs. The system reads this file
-# only after your turn ends.
-action: pending
-gpus: 0
-test: false
-milestone: core_claim
-notes: ""
+action: done
+notes: "Audit complete: 16 runs committed; genuine improvement +0.50, seed spread 0, and a task-failing shortcut +8.32. Gym files restored; report in REDTEAM.md."
