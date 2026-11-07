@@ -1,0 +1,23 @@
+{
+  "warehouse_cover": {
+    "reference_decision_calls": 44,
+    "better_decision_calls": 33,
+    "same_trace_except_extraction_counts": true,
+    "same_assignment": true,
+    "same_objective": true
+  },
+  "repair_schedule": {
+    "reference_decision_calls": 38,
+    "better_decision_calls": 29,
+    "same_trace_except_extraction_counts": true,
+    "same_assignment": true,
+    "same_objective": true
+  },
+  "network_activation": {
+    "reference_decision_calls": 69,
+    "better_decision_calls": 53,
+    "same_trace_except_extraction_counts": true,
+    "same_assignment": true,
+    "same_objective": true
+  }
+}
