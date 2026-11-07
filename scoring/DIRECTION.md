@@ -1,7 +1,12 @@
 # Research Direction
 
-Work within the implicit hitting set approach for pseudo-Boolean optimization.
+Work within the implicit hitting set approach: alternate between computing hitting sets over the collected cores and extracting new cores or solutions with the decision oracle, and finish with an exact proof that no cheaper hitting set exists.
 
-Allowed directions include better exact PB-style hitting-set optimizers, stronger local-search repair/diversification before exact optimization, improved core extraction heuristics, and hybrid schedules that reduce exact hitting-set calls while preserving exact final optimality.
+Directions the paper points to:
 
-Do not replace PBO-IHS with a direct end-to-end optimizer that ignores the core extraction and hitting-set loop. Such a solver may solve the small instances, but it does not test the paper's contribution.
+- Better hitting-set heuristics, so that fewer exact calls are needed. The paper notes that local search "can get stuck in local optima" and that improving SLS heuristics for the IHS setting "has potential for even further improvements".
+- When to demand optimal hitting sets: the `opt?` heuristic of Algorithm 2, and hybrid schedules that delay exact calls (OptLB/ForceLB/AllLB).
+- Exact optimisation strategies built from `hs_improve` calls: solution-improving search, bound probing, phase hints.
+- Core extraction strategies: weight-aware core extraction, core minimisation, multiple cores per iteration. Each one trades decision calls against stronger cores.
+
+Out of scope: replacing the IHS loop with a solver that bypasses the oracles, private complete search over the cores, or anything that reads the held-out instances (see `CONSTRAINTS.md`).

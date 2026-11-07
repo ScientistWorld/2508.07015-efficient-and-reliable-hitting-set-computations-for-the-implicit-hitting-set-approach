@@ -1,319 +1,273 @@
-"""Scaled implementation of PBO-IHS and hitting-set optimizer variants."""
+"""Reference PBO-IHS solver (scaled reproduction of Ihalainen et al., AAAI 2026).
+
+The solver speaks the JSON-lines oracle protocol documented in
+``briefing/evaluation.md``: it reads one ``instance`` message on stdin, then
+alternates requests (``decide`` / ``hs_improve``) and responses until the
+harness reports the instance certified, the budget is exhausted, or the solver
+sends ``done``.  Logs go to stderr only.
+
+Implemented procedure (paper, Section 2.2 and Algorithm 2):
+
+* Algorithm 1 (PBO-IHS): an initial decision call gives the first upper bound;
+  the hitting-set problem is seeded with the objective-only constraints; the
+  loop alternates Solve-HS and Extract-Cores until lb = ub.
+* Extract-Cores: decision calls under the hitting set as assumptions; each core
+  is added and its literals are dropped from the assumptions (weight-aware core
+  extraction) until the oracle returns a feasible assignment, which may improve
+  the upper bound.
+* Solve-HS (Algorithm 2) for variant ``sis``: Optimize by solution-improving
+  search (SIS) -- repeated exact PB decision calls ``K and O < ub_c`` until the
+  harness proves none exists, which certifies the lower bound (opt? = true).
+* Solve-HS for variant ``sis_sls``: Core-SLS first (two phases: start from the
+  previous hitting set, then from a heavily perturbed copy; prefer lower cost,
+  ties to the second phase).  If Core-SLS finds a hitting set cheaper than the
+  upper bound it is returned without changing the lower bound; otherwise SIS
+  runs as above.
+
+Usage:
+    python -m method.pbo_ihs list           # prints the variant names (JSON)
+    python -m method.pbo_ihs run sis_sls    # protocol session on stdin/stdout
+"""
 
 from __future__ import annotations
 
-import argparse
 import json
 import random
-import time
-from dataclasses import asdict, dataclass
-from pathlib import Path
+import sys
 
-from data.pbo_instances import PBConstraint, PBOInstance, all_assignments, benchmark_instances
-
-
-@dataclass
-class SolverStats:
-    instance: str
-    variant: str
-    solved: bool
-    optimal_cost: int | None
-    best_assignment: list[int] | None
-    iterations: int
-    cores_learned: int
-    hs_calls: int
-    decision_calls: int
-    sls_successes: int
-    exact_hs_calls: int
-    elapsed_sec: float
-    certificate: dict
-    trace: list[dict]
+VARIANTS = ["sis", "sis_sls"]
+SLS_FLIPS_PER_VAR = 80
 
 
-def constraint_to_dict(constraint: PBConstraint) -> dict:
-    return {
-        "terms": [
-            {"var": var, "positive": positive, "coeff": coeff}
-            for var, positive, coeff in constraint.terms
-        ],
-        "rhs": constraint.rhs,
-    }
+class Stop(Exception):
+    """Raised when the harness ends the session (certified, budget, error)."""
 
 
-def objective_cost(weights: tuple[int, ...], obj_assignment: tuple[int, ...]) -> int:
-    return sum(w * obj_assignment[i] for i, w in enumerate(weights))
+class OracleClient:
+    def __init__(self, inp, out):
+        self.inp = inp
+        self.out = out
+
+    def read(self) -> dict:
+        line = self.inp.readline()
+        if not line:
+            raise Stop("eof")
+        return json.loads(line)
+
+    def request(self, payload: dict) -> dict:
+        self.out.write(json.dumps(payload) + "\n")
+        self.out.flush()
+        resp = self.read()
+        if "error" in resp:
+            raise Stop(resp["error"])
+        return resp
+
+    def done(self) -> None:
+        try:
+            self.out.write(json.dumps({"op": "done"}) + "\n")
+            self.out.flush()
+        except (BrokenPipeError, OSError):
+            pass
 
 
-def satisfies_constraints(constraints: tuple[PBConstraint, ...], assignment: tuple[int, ...]) -> bool:
-    return all(c.satisfied(assignment) for c in constraints)
+# ---------------------------------------------------------------------------
+# Constraint helpers (general PB constraints: sum coeff * lit >= rhs)
+# ---------------------------------------------------------------------------
 
 
-def full_solve(inst: PBOInstance, assumptions: tuple[int | None, ...] | None = None):
-    assumptions = assumptions or (None,) * inst.n_objective
-    for assignment in all_assignments(inst.n_vars):
-        if any(v is not None and assignment[i] != v for i, v in enumerate(assumptions)):
-            continue
-        if satisfies_constraints(inst.constraints, assignment):
-            return assignment
-    return None
+def parse_constraint(payload: dict) -> tuple[list[tuple[int, int, int]], int]:
+    terms = [(int(a), int(v), int(p)) for a, v, p in payload["terms"]]
+    return terms, int(payload["rhs"])
 
 
-def seed_cores(inst: PBOInstance) -> list[PBConstraint]:
-    return [c for c in inst.constraints if c.objective_only(inst.n_objective)]
+def cost_of(weights: list[int], x: list[int]) -> int:
+    return sum(w for w, xi in zip(weights, x) if xi)
 
 
-def _core_from_partial(partial: dict[int, int]) -> PBConstraint:
-    terms = []
-    for var, value in sorted(partial.items()):
-        terms.append((var, False if value else True, 1))
-    return PBConstraint(tuple(terms), 1)
+# ---------------------------------------------------------------------------
+# Core-SLS (incremental implementation of the reference scoring rule)
+# ---------------------------------------------------------------------------
 
 
-def extract_core(inst: PBOInstance, obj_assignment: tuple[int, ...]) -> tuple[PBConstraint, int]:
-    partial = {i: obj_assignment[i] for i in range(inst.n_objective)}
-    calls = 0
-    changed = True
-    while changed:
-        changed = False
-        for var in list(partial):
-            trial = dict(partial)
-            del trial[var]
-            assumptions = [None] * inst.n_objective
-            for key, value in trial.items():
-                assumptions[key] = value
-            calls += 1
-            if full_solve(inst, tuple(assumptions)) is None:
-                partial = trial
-                changed = True
-    return _core_from_partial(partial), calls
+def core_sls(n: int, weights: list[int], cores: list, ub: int, seed: int, previous: list[int] | None,
+             flips_per_var: int = SLS_FLIPS_PER_VAR):
+    """Two-phase local search for a cheap assignment satisfying every core.
 
-
-def hs_feasible(cores: list[PBConstraint], obj_assignment: tuple[int, ...]) -> bool:
-    return all(c.satisfied(obj_assignment) for c in cores)
-
-
-def ip_exact_hs(cores: list[PBConstraint], weights: tuple[int, ...]):
-    best_assignment = None
-    best_cost = None
-    checked = 0
-    for assignment in all_assignments(len(weights)):
-        checked += 1
-        if not hs_feasible(cores, assignment):
-            continue
-        cost = objective_cost(weights, assignment)
-        if best_cost is None or cost < best_cost:
-            best_assignment = assignment
-            best_cost = cost
-    if best_assignment is None:
-        raise RuntimeError("core set is infeasible")
-    return best_assignment, best_cost, checked
-
-
-def sis_hs(cores: list[PBConstraint], weights: tuple[int, ...], ub: int):
-    """Solution-improving search over the current core set."""
-    best_assignment = None
-    best_cost = ub
-    calls = 0
-    while True:
-        candidate = None
-        candidate_cost = None
-        for assignment in all_assignments(len(weights)):
-            if not hs_feasible(cores, assignment):
-                continue
-            cost = objective_cost(weights, assignment)
-            if cost < best_cost and (candidate_cost is None or cost > candidate_cost):
-                candidate = assignment
-                candidate_cost = cost
-        calls += 1
-        if candidate is None:
-            if best_assignment is None:
-                best_assignment, best_cost, _ = ip_exact_hs(cores, weights)
-            return best_assignment, best_cost, calls
-        best_assignment = candidate
-        best_cost = candidate_cost
-
-
-def core_sls(cores: list[PBConstraint], weights: tuple[int, ...], ub: int, seed: int, previous=None):
+    Each flip minimises (change in total constraint violation, change in cost,
+    random tie-break) over all variables.  The cheapest violation-free
+    assignment with cost < ub seen in either phase is returned; ties go to the
+    second (diversified) phase.  Returns (assignment, cost) or (None, None).
+    """
     rng = random.Random(seed)
-    n = len(weights)
-    starts = [list(previous) if previous is not None else [0] * n]
-    diversified = list(starts[0])
+    start = list(previous) if previous is not None else [0] * n
+    diversified = list(start)
     for idx in rng.sample(range(n), max(1, n // 2)):
         diversified[idx] = 1 - diversified[idx]
-    starts.append(diversified)
 
+    occ: list[list[tuple[int, int, int]]] = [[] for _ in range(n)]  # (constraint, coeff, polarity)
+    for ci, (terms, _) in enumerate(cores):
+        for a, v, p in terms:
+            occ[v].append((ci, a, p))
+    rhs = [r for _, r in cores]
+
+    def run(init: list[int]):
+        x = list(init)
+        val = [0] * len(cores)
+        for ci, (terms, _) in enumerate(cores):
+            val[ci] = sum(a * (x[v] if p else 1 - x[v]) for a, v, p in terms)
+        score = [0] * n
+
+        def contrib(v: int, ci: int, a: int, p: int) -> int:
+            lit = x[v] if p else 1 - x[v]
+            d = a * (1 - 2 * lit)
+            return max(0, rhs[ci] - val[ci] - d) - max(0, rhs[ci] - val[ci])
+
+        for v in range(n):
+            score[v] = sum(contrib(v, ci, a, p) for ci, a, p in occ[v])
+        gap = sum(max(0, rhs[ci] - val[ci]) for ci in range(len(cores)))
+        cost = cost_of(weights, x)
+        best = None
+        best_cost = None
+        for _ in range(flips_per_var * n):
+            if gap == 0 and cost < ub and (best_cost is None or cost <= best_cost):
+                best, best_cost = list(x), cost
+            # argmin of (violation change, cost change), uniform among ties
+            best_s = None
+            best_dc = 0
+            ties: list[int] = []
+            for u in range(n):
+                s = score[u]
+                if best_s is not None and s > best_s:
+                    continue
+                dc = -weights[u] if x[u] else weights[u]
+                if best_s is None or s < best_s or dc < best_dc:
+                    best_s, best_dc, ties = s, dc, [u]
+                elif dc == best_dc:
+                    ties.append(u)
+            v = ties[0] if len(ties) == 1 else ties[rng.randrange(len(ties))]
+            gap += score[v]
+            pairs = neighbours[v]
+            for u, ci, a, p in pairs:
+                score[u] -= contrib(u, ci, a, p)
+            d = 1 - 2 * x[v]
+            for ci, a, p in occ[v]:
+                val[ci] += a * d * (1 if p else -1)
+            x[v] += d
+            cost += weights[v] * d
+            for u, ci, a, p in pairs:
+                score[u] += contrib(u, ci, a, p)
+        return best, best_cost
+
+    # (u, constraint, coeff, polarity) for every u sharing a constraint with v
+    neighbours: list[list[tuple[int, int, int, int]]] = [[] for _ in range(n)]
+    for v in range(n):
+        seen = set()
+        for ci, _, _ in occ[v]:
+            if ci in seen:
+                continue
+            seen.add(ci)
+            for a, u, p in cores[ci][0]:
+                neighbours[v].append((u, ci, a, p))
+
+    best, best_cost = None, None
+    for init in (start, diversified):
+        found, found_cost = run(init)
+        if found is not None and (best_cost is None or found_cost <= best_cost):
+            best, best_cost = found, found_cost
+    return best, best_cost
+
+
+# ---------------------------------------------------------------------------
+# Solve-HS and PBO-IHS
+# ---------------------------------------------------------------------------
+
+
+def sis_optimize(oracle: OracleClient, ub: int, phase: list[int] | None):
+    """Solution-improving search over the cores held by the harness.
+
+    Returns (gamma, cost) of an optimal hitting set, or (None, ub) when no
+    hitting set is cheaper than ub (the harness then has lb = ub).
+    """
+    bound = ub
     best = None
-    best_cost = None
-    flips = 0
-    for start in starts:
-        current = start
-        for _ in range(80 * n):
-            flips += 1
-            tup = tuple(current)
-            if hs_feasible(cores, tup):
-                cost = objective_cost(weights, tup)
-                if cost < ub and (best_cost is None or cost <= best_cost):
-                    best = tup
-                    best_cost = cost
-            scores = []
-            current_gap = sum(max(0, c.rhs - c.value(tuple(current))) for c in cores)
-            for var in range(n):
-                trial = current.copy()
-                trial[var] = 1 - trial[var]
-                next_gap = sum(max(0, c.rhs - c.value(tuple(trial))) for c in cores)
-                cost_delta = objective_cost(weights, tuple(trial)) - objective_cost(weights, tuple(current))
-                scores.append((next_gap - current_gap, cost_delta, rng.random(), var))
-            _, _, _, var = min(scores)
-            current[var] = 1 - current[var]
-    return best, best_cost, flips
+    while True:
+        req = {"op": "hs_improve", "bound": bound}
+        if phase is not None:
+            req["phase"] = phase
+        resp = oracle.request(req)
+        if not resp["sat"]:
+            return best, bound
+        best = resp["assignment"]
+        bound = resp["cost"]
+        phase = best
+        if resp.get("certified"):
+            raise Stop("certified")
 
 
-def solve_hs(variant: str, cores: list[PBConstraint], weights: tuple[int, ...], lb: int, ub: int, seed: int, previous):
-    if variant == "ip_exact":
-        gamma, cost, checked = ip_exact_hs(cores, weights)
-        return gamma, cost, {"exact": True, "checked": checked, "sls": False, "solution_cost": cost}
-    if variant == "sis":
-        gamma, cost, calls = sis_hs(cores, weights, ub)
-        return gamma, cost, {"exact": True, "sis_calls": calls, "sls": False, "solution_cost": cost}
+def solve_hs(variant: str, oracle: OracleClient, n: int, weights: list[int], cores: list, ub: int, seed: int,
+             previous: list[int] | None):
     if variant == "sis_sls":
-        gamma, cost, flips = core_sls(cores, weights, ub, seed, previous)
+        gamma, cost = core_sls(n, weights, cores, ub, seed, previous)
         if gamma is not None:
-            return gamma, lb, {"exact": False, "sls": True, "flips": flips, "solution_cost": cost}
-        gamma, cost, calls = sis_hs(cores, weights, ub)
-        return gamma, cost, {"exact": True, "sis_calls": calls, "sls": False, "flips": flips, "solution_cost": cost}
-    raise ValueError(f"unknown variant {variant}")
+            return gamma
+    elif variant != "sis":
+        raise ValueError(f"unknown variant {variant}")
+    gamma, _ = sis_optimize(oracle, ub, previous)
+    return gamma
 
 
-def pbo_ihs(inst: PBOInstance, variant: str, seed: int, max_iterations: int = 200) -> SolverStats:
-    start = time.perf_counter()
-    first = full_solve(inst)
-    decision_calls = 1
-    if first is None:
-        return SolverStats(inst.name, variant, False, None, None, 0, 0, 0, decision_calls, 0, 0, 0.0, {}, [])
+def pbo_ihs(oracle: OracleClient, inst: dict, variant: str) -> None:
+    n = int(inst["n_objective"])
+    weights = [int(w) for w in inst["weights"]]
+    seed = int(inst.get("seed", 1))
+    cores = [parse_constraint(c) for c in inst["seed_constraints"]]
 
-    best = first
-    ub = inst.objective_cost(best)
-    lb = -1
-    cores = seed_cores(inst)
-    learned = 0
-    hs_calls = 0
-    exact_hs_calls = 0
-    sls_successes = 0
+    resp = oracle.request({"op": "decide", "assumptions": []})
+    if not resp["sat"]:
+        return  # no feasible solutions
+    ub = resp["ub"]
     previous = None
-    trace = []
-
-    for iteration in range(1, max_iterations + 1):
-        event = {
-            "iteration": iteration,
-            "lb_before": lb,
-            "ub_before": ub,
-            "core_count_before": len(cores),
-        }
-        gamma, new_lb, meta = solve_hs(variant, cores, inst.objective_weights, lb, ub, seed + iteration, previous)
-        hs_calls += 1
-        previous = gamma
-        event["hs"] = {
-            "gamma": list(gamma),
-            "cost": meta["solution_cost"],
-            "exact": meta["exact"],
-            "sls": bool(meta.get("sls")),
-            "optimizer": variant,
-            "details": {k: v for k, v in meta.items() if k not in {"solution_cost", "exact", "sls"}},
-        }
-        if meta["exact"]:
-            exact_hs_calls += 1
-            lb = new_lb
-        elif meta.get("sls"):
-            sls_successes += 1
-        event["lb_after_hs"] = lb
-        if ub == lb:
-            event["terminated_after_hs"] = True
-            event["ub_after"] = ub
-            event["lb_after"] = lb
-            event["best_after"] = list(best)
-            trace.append(event)
-            break
-
-        alpha = full_solve(inst, tuple(gamma))
-        decision_calls += 1
-        if alpha is not None:
-            cost = inst.objective_cost(alpha)
-            event["decision"] = {
-                "sat": True,
-                "alpha": list(alpha),
-                "alpha_cost": cost,
-            }
-            if cost < ub:
-                ub = cost
-                best = alpha
-            if ub == lb:
-                event["terminated_after_decision"] = True
-                event["ub_after"] = ub
-                event["lb_after"] = lb
-                event["best_after"] = list(best)
-                trace.append(event)
+    iteration = 0
+    while True:
+        iteration += 1
+        gamma = solve_hs(variant, oracle, n, weights, cores, ub, seed + iteration, previous)
+        if gamma is None:
+            return  # SIS proved lb = ub; the harness has certified the instance
+        previous = list(gamma)
+        assumptions = {v: gamma[v] for v in range(n)}
+        while True:
+            resp = oracle.request({"op": "decide", "assumptions": [[v, val] for v, val in assumptions.items()]})
+            if resp.get("certified"):
+                return
+            if resp["sat"]:
+                ub = resp["ub"]
                 break
-        else:
-            core, calls = extract_core(inst, gamma)
-            decision_calls += calls
-            event["decision"] = {
-                "sat": False,
-                "new_core": constraint_to_dict(core),
-                "extraction_calls": calls,
-            }
+            core = parse_constraint(resp["core"])
             cores.append(core)
-            learned += 1
-        event["ub_after"] = ub
-        event["lb_after"] = lb
-        event["best_after"] = list(best)
-        trace.append(event)
-    else:
-        raise RuntimeError(f"{variant} exceeded iteration limit on {inst.name}")
-
-    elapsed = time.perf_counter() - start
-    cert = {
-        "lower_bound": lb,
-        "upper_bound": ub,
-        "core_count": len(cores),
-        "exact_hs_calls": exact_hs_calls,
-        "sls_successes": sls_successes,
-        "trace_events": len(trace),
-        "optimality_reason": "ub_equals_lb",
-    }
-    return SolverStats(
-        inst.name,
-        variant,
-        True,
-        ub,
-        list(best),
-        iteration,
-        learned,
-        hs_calls,
-        decision_calls,
-        sls_successes,
-        exact_hs_calls,
-        elapsed,
-        cert,
-        trace,
-    )
+            for _, v, _ in core[0]:
+                assumptions.pop(v, None)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--variant", choices=["ip_exact", "sis", "sis_sls"], action="append", required=True)
-    parser.add_argument("--output", default="checkpoints/pbo_ihs_results.json")
-    parser.add_argument("--seed", type=int, default=1)
-    args = parser.parse_args()
-
-    results = []
-    for variant in args.variant:
-        for inst in benchmark_instances():
-            results.append(asdict(pbo_ihs(inst, variant, args.seed)))
-
-    out = Path(args.output)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"results": results}, indent=2), encoding="utf-8")
+def main(argv: list[str]) -> int:
+    if len(argv) >= 2 and argv[1] == "list":
+        print(json.dumps(VARIANTS))
+        return 0
+    if len(argv) >= 3 and argv[1] == "run":
+        variant = argv[2]
+        if variant not in VARIANTS:
+            print(f"unknown variant {variant}", file=sys.stderr)
+            return 2
+        oracle = OracleClient(sys.stdin, sys.stdout)
+        try:
+            inst = oracle.read()
+            pbo_ihs(oracle, inst, variant)
+        except Stop:
+            return 0
+        oracle.done()
+        return 0
+    print(__doc__, file=sys.stderr)
+    return 2
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main(sys.argv))

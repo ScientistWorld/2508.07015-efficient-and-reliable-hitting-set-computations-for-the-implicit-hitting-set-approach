@@ -1,15 +1,7 @@
 #!/bin/bash
+# Hidden test: score every variant listed by `bash scripts/solver.sh list` on
+# the held-out instances in eval/test/ through the oracle harness.
+# Takes no arguments; writes scoring/scores_test.json.
 set -euo pipefail
-
-cd /home/user
-
-RESULTS_ROOT="${1:-checkpoints}"
-if [[ -d "${RESULTS_ROOT}" ]]; then
-  RESULTS_PATH="${RESULTS_ROOT}/pbo_ihs_results.json"
-else
-  RESULTS_PATH="${RESULTS_ROOT}"
-fi
-
-python -m eval.test.evaluate_pbo_ihs_test \
-  --results "${RESULTS_PATH}" \
-  --output scoring/scores_test.json
+cd "$(dirname "$0")/.."
+python3 -m eval.test.harness

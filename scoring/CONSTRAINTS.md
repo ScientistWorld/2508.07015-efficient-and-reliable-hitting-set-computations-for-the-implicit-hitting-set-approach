@@ -1,9 +1,16 @@
 # Constraints
 
-Future methods must use the tracked PBO instances from `data/pbo_instances.py` and write artifacts in the same JSON format as `method/pbo_ihs.py`, including per-instance IHS trace events.
+The evaluator enforces these mechanically:
 
-Evaluation code must remain independent of `method/`. It may import `data/` but must not import solver internals.
+- Instances are visible to a solver only through the protocol in `briefing/evaluation.md`. The constraints that involve auxiliary variables are never sent. Lower bounds exist only as `hs_improve` proofs inside the harness; upper bounds exist only as `decide` answers.
+- Every `decide` and `hs_improve` call is counted by the harness. Solver-written numbers, flags, logs or files are never read. Malformed or unknown requests end the session unsolved.
+- Uncertified instances count as unsolved and are charged the 720-call cap in `mean_call_ratio`.
+- Ground truth, test instances, budgets, seeds and the reference row are fixed by `eval/test/` and `scoring/`. Editing `data/` changes only training feedback.
 
-A valid improvement cannot change the benchmark instances, objective weights, or feasibility constraints. It may change the hitting-set optimizer strategy inside the IHS loop.
+Rules a submission must follow, which the evaluator cannot observe (checked by the shortcut grader):
 
-The reported certificate fields must correspond to the actual run: lower bound, upper bound, core count, exact hitting-set call count, SLS successes, and trace length. The evaluator recomputes these from trace events, so copying reference values into artifacts is invalid.
+1. Do not read anything under `eval/test/` (instances, generator, seed) from solver code, and do not try to recover held-out instances by other means.
+2. Every **exact** or otherwise **complete** optimisation over the hitting-set problem (branch and bound, exhaustive enumeration, an ILP/MaxSAT/PB/CP solver, etc. run on the cores) must go through `hs_improve`, so that it is counted. Incomplete heuristics run privately (local search, greedy, repair, diversification) are the intended place to innovate and are free. Running a private exact optimiser and presenting its results as heuristic hitting sets is a shortcut.
+3. Use the `seed` from the instance message for all randomness, so that runs are reproducible.
+4. Solve each instance from the protocol alone. Do not hard-code instance identities, weights or answers taken from the training set.
+5. Keep each instance under the 120 s wall-clock guard, and list only the variants you want scored. The hidden test runs every listed variant on all 80 instances in one job.

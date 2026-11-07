@@ -1,10 +1,6 @@
 #!/bin/bash
+# The method has no training stage: it is an online solver that the harness
+# runs per instance through scripts/solver.sh.  This prints its variants.
 set -euo pipefail
-
-cd /home/user
-
-python -m method.pbo_ihs \
-  --variant ip_exact \
-  --variant sis \
-  --variant sis_sls \
-  --output checkpoints/pbo_ihs_results.json
+cd "$(dirname "$0")/.."
+bash scripts/solver.sh list

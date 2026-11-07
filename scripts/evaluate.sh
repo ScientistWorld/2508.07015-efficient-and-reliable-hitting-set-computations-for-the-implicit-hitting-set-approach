@@ -1,7 +1,5 @@
 #!/bin/bash
+# Visible evaluation of the current solver (training instances) -> scoring/scores.json
 set -euo pipefail
-
-cd /home/user
-
-RESULTS_PATH="${1:-checkpoints/pbo_ihs_results.json}"
-python -m eval.evaluate_pbo_ihs --results "${RESULTS_PATH}"
+cd "$(dirname "$0")/.."
+python3 -m eval.train.harness --output scoring/scores.json --details scoring/details_train.json

@@ -1,89 +1,54 @@
 {
   "experiments": {
-    "scaled_pbo_ihs_exactness": {
-      "description": "Scaled PBO-IHS benchmark: exact and PB-style hitting-set optimizers must solve all generated PBO instances and independently certify the optimum.",
+    "certified_ihs_under_budget": {
+      "description": "Certified pseudo-Boolean optimisation through counted oracles on held-out generated instances: how many instances a solver certifies optimal within a budget of oracle calls, and how many calls certification takes. The instance constraints are visible only through the harness's decision oracle; lower bounds come only from the harness's exact hitting-set oracle.",
       "weight": 1.0,
-      "primary_metric": "exact_hs_call_fraction",
+      "primary_metric": "certified_solve_rate",
+      "rank_reference": "Rank of a submission = weight * sum over metrics of coefficient * (submission value - reference value). The reference value is the proposed `sis_sls` row of scoring/scores_test.json (reference method, seed offset 0). The rows with coefficient 0 are diagnostics and do not enter the rank.",
+      "scaling_note": "The `results` below are the paper's own numbers: the fraction of its 1786 PB-competition benchmark instances solved within 1 h and 14 GB (Table 1, single-solver SIS: 672 solved; Table 2, SIS with SLS: +13, i.e. 685). The gym is scaled down: generated network-activation instances with 24-52 objective variables, a pure-Python oracle harness standing in for RoundingSat, and an oracle-call budget (180 calls to count as solved, hard cap 720) instead of wall-clock time. Gym values are therefore not expected to equal these fractions; only the direction (SLS-integrated SIS solves more than plain SIS) is the reproduced claim.",
+      "paper_reported": {
+        "benchmark_instances": 1786,
+        "table1_single_solver_solved": {"Gurobi": 951, "SCIP": 913, "Exact SCIP": 762, "Core Guided": 687, "SIS Reified": 651, "SIS": 672, "SIS + CB": 716},
+        "table1_hybrid_OptLB_solved": {"Core Guided": 729, "SIS Reified": 704, "SIS": 696, "SIS + CB": 746},
+        "table2_ihs_plus_sls_gain": {"Gurobi": 17, "SCIP": 4, "Exact SCIP": 44, "Core Guided": 41, "SIS Reified": 10, "SIS": 13, "SIS + CB": 19},
+        "table2_ihs_plus_sls_instances_solved_by_only_one_configuration": {"Gurobi": 31, "SCIP": 18, "Exact SCIP": 58, "Core Guided": 53, "SIS Reified": 52, "SIS": 39, "SIS + CB": 53},
+        "wrong_optimality_claims_found_by_proof_logging": {"Gurobi": 9, "Exact SCIP": 4}
+      },
       "metrics": {
-        "solved_count": {
-          "higher_is_better": true,
-          "coefficient": 0.5,
-          "description": "Counts tracked instances with a feasible reported solution, so methods cannot hide hard cases by omitting rows."
-        },
-        "optimality_match_rate": {
+        "certified_solve_rate": {
           "higher_is_better": true,
           "coefficient": 1.0,
-          "description": "Fraction of tracked instances whose reported objective value matches an independently computed optimum."
+          "description": "Fraction of held-out instances that the harness itself certifies optimal (its best feasible cost from the decision oracle equals its best lower bound from the exact hitting-set oracle) within 180 oracle calls. Every instance is in the denominator; anything uncertified counts as unsolved. Analogue of the paper's number of instances solved within the resource limit."
         },
-        "certificate_accept_rate": {
-          "higher_is_better": true,
-          "coefficient": 1.0,
-          "description": "Fraction of tracked instances with a valid final optimality certificate and accepted selected IHS trace events."
-        },
-        "selected_trace_accept_rate": {
-          "higher_is_better": true,
-          "coefficient": 0.6,
-          "description": "Fraction of visible or held-out trace events whose hitting-set, decision, bound-update, and learned-core fields validate independently."
-        },
-        "exact_hs_call_fraction": {
+        "mean_call_ratio": {
           "higher_is_better": false,
-          "coefficient": -0.4,
-          "description": "Fraction of selected IHS iterations that required an exact hitting-set solve, measuring exact-solver dependence independently of hardware speed."
+          "coefficient": -0.25,
+          "description": "Mean over held-out instances of (oracle calls the harness answered until it certified the instance) / 180; an instance not certified within the hard cap of 720 calls counts as 720/180 = 4. Machine-independent efficiency of certified solving, the quantity the paper uses to explain its hybrids (fewer oracle calls)."
         },
-        "avg_exact_hs_calls": {
+        "mean_decide_calls": {
           "higher_is_better": false,
-          "coefficient": -0.2,
-          "description": "Average number of selected exact hitting-set calls, penalizing expensive exact optimization when exactness is maintained."
+          "coefficient": 0.0,
+          "description": "Diagnostic (not ranked): mean decision-oracle calls per instance, as counted by the harness."
         },
-        "avg_iterations": {
+        "mean_hs_calls": {
           "higher_is_better": false,
-          "coefficient": -0.1,
-          "description": "Average selected IHS iterations, used as a machine-independent efficiency proxy."
+          "coefficient": 0.0,
+          "description": "Diagnostic (not ranked): mean exact hitting-set oracle calls per instance, as counted by the harness."
         },
-        "avg_decision_calls": {
+        "hs_call_share": {
           "higher_is_better": false,
-          "coefficient": -0.1,
-          "description": "Average selected feasibility and core-extraction decision calls, used as a solver-work constraint."
-        },
-        "sls_successes": {
-          "higher_is_better": true,
-          "coefficient": 0.1,
-          "description": "Counts selected local-search hitting-set successes that produce a valid improving candidate before exact fallback."
+          "coefficient": 0.0,
+          "description": "Diagnostic (not ranked): exact hitting-set oracle calls as a share of all oracle calls, as counted by the harness."
         }
       },
       "results": {
-        "ip_exact": {
-          "type": "baseline",
-          "solved_count": 3,
-          "optimality_match_rate": 1.0,
-          "certificate_accept_rate": 1.0,
-          "exact_hs_call_fraction": 1.0,
-          "avg_exact_hs_calls": 5.0,
-          "avg_iterations": 5.0,
-          "avg_decision_calls": 50.0,
-          "sls_successes": 0
-        },
         "sis": {
-          "type": "proposed",
-          "solved_count": 3,
-          "optimality_match_rate": 1.0,
-          "certificate_accept_rate": 1.0,
-          "exact_hs_call_fraction": 1.0,
-          "avg_exact_hs_calls": 5.0,
-          "avg_iterations": 5.0,
-          "avg_decision_calls": 50.0,
-          "sls_successes": 0
+          "type": "baseline",
+          "certified_solve_rate": 0.37626
         },
         "sis_sls": {
           "type": "proposed",
-          "solved_count": 3,
-          "optimality_match_rate": 1.0,
-          "certificate_accept_rate": 1.0,
-          "exact_hs_call_fraction": 0.23529411764705882,
-          "avg_exact_hs_calls": 1.3333333333333333,
-          "avg_iterations": 5.666666666666667,
-          "avg_decision_calls": 50.333333333333336,
-          "sls_successes": 13
+          "certified_solve_rate": 0.38354
         }
       }
     }

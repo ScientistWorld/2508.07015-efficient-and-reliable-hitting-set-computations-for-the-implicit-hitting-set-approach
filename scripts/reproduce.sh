@@ -1,7 +1,8 @@
 #!/bin/bash
+# Reproduce the reference scores end to end (CPU only, roughly 15-25 minutes).
 set -euo pipefail
-
-cd /home/user
-
+cd "$(dirname "$0")/.."
 bash scripts/method.sh
-bash scripts/evaluate.sh checkpoints/pbo_ihs_results.json
+bash scripts/evaluate_train.sh
+cp scoring/scores_train.json scoring/scores.json
+bash scripts/evaluate_test.sh

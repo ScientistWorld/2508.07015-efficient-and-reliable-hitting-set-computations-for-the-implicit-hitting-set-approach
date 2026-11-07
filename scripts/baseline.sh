@@ -1,7 +1,7 @@
 #!/bin/bash
+# The baseline (`sis`: exact hitting sets by solution-improving search, no
+# local search) is one of the variants the reference solver lists, so the
+# standard evaluation scores it alongside the proposed `sis_sls` variant.
 set -euo pipefail
-
-cd /home/user
-
-python -m method.pbo_ihs --variant ip_exact --output checkpoints/ip_exact_results.json
-bash scripts/evaluate.sh checkpoints/ip_exact_results.json
+cd "$(dirname "$0")/.."
+bash scripts/evaluate_train.sh

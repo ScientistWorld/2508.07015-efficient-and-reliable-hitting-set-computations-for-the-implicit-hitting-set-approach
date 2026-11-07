@@ -1,5 +1,5 @@
 # Overview
 
-The paper proposes more reliable ways to compute hitting sets inside implicit hitting set solvers for pseudo-Boolean optimization. It compares standard IP-based hitting-set optimization with exact PB reasoning, hybrid verification schedules, and stochastic local search.
+The paper studies more reliable and efficient ways to compute hitting sets inside implicit hitting set (IHS) solvers for pseudo-Boolean optimisation. It compares IP-based hitting-set optimisation with exact pseudo-Boolean reasoning, local search, hybrid schedules, and certificates of optimality.
 
-This reproduction packages a scaled PBO-IHS gym. It implements the actual IHS loop and several hitting-set optimizer variants, then evaluates whether the methods solve nontrivial PBO instances while maintaining independently checkable optimality bounds.
+This gym poses the problem behind that work at small scale: certify the optimum of held-out pseudo-Boolean instances whose constraints are reachable only through counted oracles, within a budget of oracle calls. The reference solver is the paper's PBO-IHS loop with solution-improving search (`sis`) and with local search integrated into the hitting-set step (`sis_sls`).
