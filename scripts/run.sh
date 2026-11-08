@@ -15,8 +15,14 @@ after=$(sha256sum data/instances_train.json eval/test/instances_test.json)
 if [ "$before" = "$after" ]; then echo "instances reproducible" > "$R/instances_check.txt"; else echo "INSTANCE MISMATCH" > "$R/instances_check.txt"; fi
 
 # 1. Reference method end to end (train + hidden test scores)
+if [ ! -f "$R/.train_done" ]; then
+  bash scripts/method.sh
+  bash scripts/evaluate_train.sh > "$R/reference_train.log" 2>&1
+  cp scoring/scores_train.json scoring/scores.json
+  touch "$R/.train_done"
+fi
 if [ ! -f "$R/.reference_done" ]; then
-  bash scripts/reproduce.sh > "$R/reference_reproduce.log" 2>&1
+  bash scripts/evaluate_test.sh > "$R/reference_test.log" 2>&1
   cp scoring/scores_test.json "$R/reference_seed0_test.json"
   touch "$R/.reference_done"
 fi
