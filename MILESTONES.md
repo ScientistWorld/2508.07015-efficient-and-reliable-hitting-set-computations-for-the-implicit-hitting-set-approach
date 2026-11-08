@@ -29,5 +29,10 @@
 - The hardened evaluator accepted the trace-validated certificates for all three variants.
 - `sis_sls` preserved 3/3 optimality and certificate acceptance while reducing average exact hitting-set calls from 5.0 to 1.333.
 
+### [2026-11-08] - core_claim (iteration 11, hardening)
+- Rebuilt the hidden test: the solver runs on 160 held-out instances in `eval/test/` through evaluator-owned, counted oracles, and certification comes from the harness's own log.
+- Reran the reference from the final code: `sis_sls` certified_solve_rate 0.681, mean_call_ratio 0.859; `sis` 0.250 / 1.614. This is the paper's direction: SLS integration solves more instances and replaces exact hitting-set calls.
+- A better variant beats the reference by 0.053–0.067 on every seed (reference seed spread 0.026). All major REDTEAM shortcuts now score at or below the reference. The private exact hitting-set shortcut is left open for the grader (see `HARDENING.md`).
+
 ## Stop Justification
 - Completed at milestone `core_claim`.

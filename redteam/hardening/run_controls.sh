@@ -13,10 +13,12 @@ H=redteam/hardening
 R=$H/results
 mkdir -p "$R"
 
-cp scripts/solver.sh "$H/.orig_solver.sh"
-cp data/instances_train.json "$H/.orig_instances_train.json"
+# Originals are saved once and kept across preemption restarts, so a restart in
+# the middle of a staged case can never mistake the staged file for the original.
+[ -f "$H/.orig_solver.sh" ] || cp scripts/solver.sh "$H/.orig_solver.sh"
+[ -f "$H/.orig_instances_train.json" ] || cp data/instances_train.json "$H/.orig_instances_train.json"
 for f in scores_test.json scores_train.json; do
-  [ -f "scoring/$f" ] && cp "scoring/$f" "$H/.orig_$f"
+  [ -f "scoring/$f" ] && [ ! -f "$H/.orig_$f" ] && cp "scoring/$f" "$H/.orig_$f"
 done
 
 restore() {
@@ -120,3 +122,6 @@ fi
 test_case shortcut_read_hidden_file shortcut_instance_lookup.py IHS_LOOKUP_FILE=eval/test/instances_test.json
 
 python3 $H/summarize.py results
+restore
+trap - EXIT
+rm -f "$H"/.orig_*

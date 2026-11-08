@@ -1,53 +1,105 @@
 # Overview
 
-The paper proposes more reliable ways to compute hitting sets inside implicit hitting set solvers for pseudo-Boolean optimization. It compares standard IP-based hitting-set optimization with exact PB reasoning, hybrid verification schedules, and stochastic local search.
+The paper studies more reliable and efficient ways to compute hitting sets inside implicit hitting set (IHS) solvers for pseudo-Boolean optimisation. It compares IP-based hitting-set optimisation with exact pseudo-Boolean reasoning, local search, hybrid schedules, and certificates of optimality.
 
-This reproduction packages a scaled PBO-IHS gym. It implements the actual IHS loop and several hitting-set optimizer variants, then evaluates whether the methods solve nontrivial PBO instances while maintaining independently checkable optimality bounds.
+This gym poses the problem behind that work at small scale: certify the optimum of held-out pseudo-Boolean instances whose constraints are reachable only through counted oracles, within a budget of oracle calls. The reference solver is the paper's PBO-IHS loop with solution-improving search (`sis`) and with local search integrated into the hitting-set step (`sis_sls`).
 
 ---
 
 # Problem
 
-The task is pseudo-Boolean optimization: find a Boolean assignment satisfying a set of pseudo-Boolean linear constraints while minimizing a positive weighted sum over objective variables.
+Certified pseudo-Boolean optimisation when the constraints can only be queried, not read.
 
-The benchmark instances in this environment are small tracked PBO instances with objective variables, auxiliary variables, and feasibility constraints. A solver must output a feasible full assignment and its objective value.
+Each instance is a 0–1 linear minimisation problem: minimise `sum_i w_i x_i` (all `w_i > 0`) over objective variables `x_0 … x_{n-1}`, subject to pseudo-Boolean constraints. Most constraints also involve auxiliary variables. A solver receives:
 
-Success is measured by independently checking feasibility and objective optimality against exhaustive search over the tracked instances.
+- the objective weights,
+- the constraints that mention objective variables only (unit-coefficient coverage rules `sum_{i in S} x_i >= k`),
+- a seed, the per-instance call budget and the solve budget.
+
+Everything else about the instance is reachable only through two oracles answered and counted by the evaluation harness:
+
+- `decide(assumptions)` — a decision procedure over the full instance under fixed values for some objective variables. It returns either a feasible assignment of the objective variables with its cost, or a **core**: a constraint over objective variables that every feasible assignment satisfies and that the assumptions violate.
+- `hs_improve(bound)` — an exact pseudo-Boolean decision procedure over the **hitting-set problem**, i.e. the objective-only constraints plus every core the harness has returned so far. It returns an assignment that satisfies all of them with cost `< bound`, or a proof that none exists. Such a proof makes `bound` a lower bound on the optimum.
+
+An instance is **solved** when the harness itself holds a feasible assignment of cost `U` and a proof that the hitting-set problem has no assignment cheaper than `U`, i.e. a certificate of optimality, within the solve budget of oracle calls. Nothing a solver claims is taken on trust.
+
+The task is to certify as many instances as possible and to use as few oracle calls as possible doing it.
+
+## Instances
+
+Instances come from a network-activation family. Each objective variable activates a component with a cost. Each demand must be served by at least one of its alternative routes, and a route is usable only when all of its components are active. Every constraint is monotone in the objective variables. Sizes range over 24–52 objective variables and 8–25 demands. The public training instances and their generator are in `data/` (`data/instances_train.json`, `data/make_train_instances.py`). The held-out test instances come from the same distribution with a private seed; they live only in `eval/test/` and are never shown to solvers.
 
 ---
 
 # Method
 
-The paper studies the implicit hitting set approach for pseudo-Boolean optimization. PBO-IHS alternates between:
+The paper (Ihalainen, Vandesande, Schidler, Berg, Bogaerts, Järvisalo, AAAI 2026) studies how to compute hitting sets inside the implicit hitting set (IHS) approach to pseudo-Boolean optimisation (PBO-IHS). Algorithm 1 alternates two components:
 
-1. Solving a hitting-set problem over the accumulated cores using the objective.
-2. Calling a decision oracle under the hitting-set assignment.
-3. Adding a new core if that assignment cannot be extended to a full feasible solution.
-4. Stopping when the best upper bound equals the hitting-set lower bound.
+1. **Solve-HS** — find an assignment to the objective variables that satisfies every core collected so far, either optimally (which yields a lower bound by Proposition 1) or heuristically (cheaper than the current upper bound, no bound change).
+2. **Extract-Cores** — call a decision oracle with the hitting set as assumptions. Each conflict yields a core; its literals are dropped from the assumptions (weight-aware core extraction) and the oracle is called again until it returns a feasible assignment, which may improve the upper bound.
 
-The implementation in `method/pbo_ihs.py` preserves this computation at small scale. It includes:
-- `ip_exact`: an exact hitting-set baseline.
-- `sis`: solution-improving search over the current cores, matching the paper's PB-style exact HS optimization family.
-- `sis_sls`: the paper's local-search integration idea, trying a two-phase repair/diversification search before falling back to exact SIS.
+The loop stops when the lower bound equals the upper bound.
 
-The full paper also evaluates native PB solvers, IP solvers, hybrids, and VeriPB proof logging at much larger scale. The official solver archive and result table URLs are captured in `scripts/download.sh`.
+The paper's contributions concern Solve-HS (Algorithm 2): exact hitting sets by pseudo-Boolean reasoning (solution-improving search, SIS; core-guided; core-boosted) instead of floating-point IP; integrating stochastic local search (Core-SLS) so that cheap heuristic hitting sets replace calls to the expensive exact optimiser; hybrids that delay proof-producing calls; and VeriPB certificates for the whole IHS run.
+
+## Reference implementation (`method/pbo_ihs.py`)
+
+A pure-Python client of the oracle protocol in `briefing/evaluation.md`. The pseudo-Boolean solver the paper calls (RoundingSat) is played by the harness: its `decide` oracle is the decision procedure over the full instance, and its `hs_improve` oracle is the exact PB decision procedure over the cores.
+
+- `sis` (baseline, the paper's single-solver "SIS" row): every Solve-HS runs SIS to optimality — repeated `hs_improve` calls with the bound tightened to each new solution until the oracle proves no cheaper hitting set exists (Algorithm 2 with `opt? = true`, no SLS).
+- `sis_sls` (proposed, the paper's "SIS + SLS"): Core-SLS first. It runs two phases, one from the previous hitting set and one from a copy with n/2 variables flipped. Each flip minimises (change in total core violation, change in cost) with random tie-breaking, for 80·n flips per phase. The cheapest violation-free assignment below the upper bound is kept, with ties going to the second phase. If SLS finds one, it is the hitting set (no lower-bound change); otherwise SIS runs as in `sis`.
+
+Both variants use the same Extract-Cores (weight-aware core extraction) and the same seeds.
+
+## Scale-down
+
+The paper runs 1786 PB-competition instances with Gurobi, SCIP, RoundingSat and VeriPB under a 1-hour limit. Here, solvers run on generated network-activation instances, 24–52 objective variables each, under a fixed oracle-call budget per instance; solved means certified optimal by the harness. The paper itself uses oracle-call counts to explain its results (OptLB "requires the fewest RoundingSat calls and performs best"). The official solver archive and result tables are fetched by `scripts/download.sh` for reference.
 
 ---
 
 # Evaluation
 
-Run `scripts/evaluate.sh` on a JSON artifact produced by a method run. The evaluator imports only `data/`, recomputes the true optimum of each tracked instance by exhaustive enumeration, verifies the reported IHS trace, and writes `scoring/scores.json`.
+## Commands
 
-For each submitted variant, every tracked benchmark instance is counted in the denominator. Missing, malformed, infeasible, non-optimal, or trace-invalid rows count as failures.
+| Command | What it does |
+|---|---|
+| `bash scripts/solver.sh list` | Your solver prints a JSON list of variant names. Every listed variant is scored. |
+| `bash scripts/solver.sh run <variant>` | Runs one protocol session (one instance) on stdin/stdout. |
+| `bash scripts/evaluate_train.sh` | Scores every listed variant on the 80 public training instances → `scoring/scores_train.json`, per-instance `scoring/details_train.json`. |
+| `bash scripts/evaluate_test.sh` | Hidden test, no arguments: scores every listed variant on 160 held-out instances in `eval/test/` → `scoring/scores_test.json`. |
 
-For certificate acceptance, the evaluator independently checks each exact hitting-set lower-bound update by exhaustive optimization over the current core set, verifies every learned core is falsified by the rejected hitting-set assignment and implied by the original instance, and recomputes exact-HS and SLS counters from the trace rather than trusting reported summary fields.
+`scripts/solver.sh` is the only interface between a solver and the evaluator. To score a different solver, change what that script executes. `eval/` never imports solver code. The harness starts a fresh solver process per instance, with the workspace as the working directory. Solver logs must go to stderr; the harness keeps them in `logs/`. Two safety limits stop runaway sessions; neither is a metric. First, a guard of 300 s per instance on time spent waiting for the solver; the harness's own oracle time is excluded, and the reference solver needs under 60 s. Second, deterministic search-node caps on the exact oracle, 2M nodes per call and 20M per instance, more than 10× what any reference session uses. A session that hits either limit ends unsolved.
 
-Metrics:
-- `solved_count`: number of feasible reported solutions.
-- `optimality_match_rate`: fraction of instances matching the independent optimum.
-- `certificate_accept_rate`: fraction of runs whose final lower and upper bounds both equal the checked optimum.
-- `avg_exact_hs_calls`: average number of exact hitting-set optimizer calls used by the run.
-- `avg_iterations`, `avg_decision_calls`, and `sls_successes`: diagnostic metrics.
+## Protocol (JSON lines)
+
+1. The harness sends one line:
+   `{"type": "instance", "n_objective": n, "weights": [...], "seed_constraints": [C, ...], "budget": 720, "solve_budget": 180, "seed": s}`
+   Constraint format `C = {"terms": [[coeff, var, polarity], ...], "rhs": k}` means `sum coeff * lit >= k`, where `lit = x_var` if `polarity == 1`, else `1 - x_var`.
+2. The solver sends requests, one JSON object per line. The harness answers each with one line.
+   - `{"op": "decide", "assumptions": [[var, value], ...]}` — any subset of objective variables, values 0/1.
+     Answer: `{"sat": true, "assignment": [n values], "cost": c, ...}` or `{"sat": false, "core": C, ...}`.
+   - `{"op": "hs_improve", "bound": b, "phase": [n values] (optional)}` — `phase` is a preferred value per variable for the oracle's search order.
+     Answer: `{"sat": true, "assignment": [...], "cost": c, ...}` (it satisfies the objective-only constraints and every core returned so far, with `c < b`), or `{"sat": false, ...}`, which proves that no such assignment exists.
+   - `{"op": "done"}` ends the session.
+
+   Every answer also carries the harness's own `lb`, `ub`, `calls_left` and `certified`.
+3. Each `decide` or `hs_improve` costs one call. The session ends when the harness has certified the instance (`lb >= ub`), when the solver sends `done` or exits, when the 720-call cap is reached (`{"error": "budget_exhausted"}`), on any malformed request (`{"error": "protocol_error"}`), or at a safety limit.
+
+The harness keeps its own log. Its upper bound is the cheapest feasible assignment its decision oracle has returned. Its lower bound is the largest `b` for which its exact oracle answered `sat: false`. A solver cannot submit answers, bounds, certificates or counts. Other messages are protocol errors and end the session unsolved.
+
+## Metrics (experiment `certified_ihs_under_budget`)
+
+Every instance is in every denominator; each variant sees the same instances and the same seeds.
+
+- `certified_solve_rate` (primary, coefficient +1.0): fraction of instances certified within 180 oracle calls.
+- `mean_call_ratio` (coefficient −0.25, lower is better): mean of (calls answered until certification) / 180. An instance not certified within the 720-call cap counts as 4.
+- Diagnostics, not ranked: `mean_decide_calls`, `mean_hs_calls`, `hs_call_share`.
+
+Rank of a submission = Σ coefficient × (its value − reference value). The reference value is the proposed `sis_sls` row of `scoring/scores_test.json`. A run that certifies nothing scores 0 on the solve rate and 4 on the call ratio, which is the worst possible on both.
+
+## Train vs test
+
+Train and test instances come from the same generator and size distribution (80 training, 160 held-out), with the same budgets and the same harness code (two independent copies). The public generator cannot reproduce the test instances: their seed is private to `eval/test/`. Train scores are feedback only. A solver tuned to the identity of training instances gains nothing on test.
 
 ---
 
