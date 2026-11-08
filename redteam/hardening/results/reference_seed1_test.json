@@ -1,22 +1,23 @@
 {
   "slice": "test",
-  "solve_budget": 180,
-  "call_cap": 720,
+  "solve_budget": 140,
+  "call_cap": 560,
   "n_instances": 160,
   "seed_offset": 1,
+  "rescored_from": "redteam/hardening/results_b180/reference_seed1_test.json",
   "experiments": {
     "certified_ihs_under_budget": {
       "results": {
         "sis": {
-          "certified_solve_rate": 0.25,
-          "mean_call_ratio": 1.613784722222222,
-          "mean_decide_calls": 126.30625,
-          "mean_hs_calls": 164.175,
-          "hs_call_share": 0.5651827785786518
+          "certified_solve_rate": 0.16875,
+          "mean_call_ratio": 2.0326339285714288,
+          "mean_decide_calls": 123.9625,
+          "mean_hs_calls": 160.60625,
+          "hs_call_share": 0.564384704926314
         },
         "sis_sls": {
-          "certified_solve_rate": 0.69375,
-          "mean_call_ratio": 0.8501041666666664,
+          "certified_solve_rate": 0.46875,
+          "mean_call_ratio": 1.0929910714285715,
           "mean_decide_calls": 136.03125,
           "mean_hs_calls": 16.9875,
           "hs_call_share": 0.11101580688641098

@@ -5,25 +5,61 @@
       "weight": 1.0,
       "primary_metric": "certified_solve_rate",
       "rank_reference": "Rank of a submission = weight * sum over metrics of coefficient * (submission value - reference value). The reference value is the proposed `sis_sls` row of scoring/scores_test.json (reference method, seed offset 0). The rows with coefficient 0 are diagnostics and do not enter the rank.",
-      "scaling_note": "The `results` below are the paper's own numbers: the fraction of its 1786 PB-competition benchmark instances solved within 1 h and 14 GB (Table 1, single-solver SIS: 672 solved; Table 2, SIS with SLS: +13, i.e. 685). The gym is scaled down: generated network-activation instances with 24-52 objective variables, a pure-Python oracle harness standing in for RoundingSat, and an oracle-call budget (180 calls to count as solved, hard cap 720) instead of wall-clock time. Gym values are therefore not expected to equal these fractions; only the direction (SLS-integrated SIS solves more than plain SIS) is the reproduced claim.",
+      "scaling_note": "The `results` entry for the proposed variant is the paper's own number: the fraction of its 1786 PB-competition benchmark instances solved within 1 h and 14 GB by SIS with SLS (Table 1, single-solver SIS: 672 solved; Table 2, IHS + SLS for SIS: +13, i.e. 685/1786 = 0.38354). The gym is scaled down: generated network-activation instances with 24-52 objective variables, a pure-Python oracle harness standing in for RoundingSat, and an oracle-call budget instead of wall-clock time. The solve budget (140 calls) is the reference solver's median calls-to-certify on the public training instances, the point where the solve rate is most sensitive; the hard cap is 4 x 140 = 560. Gym values are therefore not expected to equal the paper's fractions, which depend on the composition of the competition benchmark; the reproduced claim is the direction (SLS-integrated SIS certifies more than plain SIS). The baseline row carries no numeric value because the paper's SIS fraction (672/1786 = 0.37626, kept verbatim in `paper_reported`) has no comparable counterpart at this scale.",
       "paper_reported": {
         "benchmark_instances": 1786,
-        "table1_single_solver_solved": {"Gurobi": 951, "SCIP": 913, "Exact SCIP": 762, "Core Guided": 687, "SIS Reified": 651, "SIS": 672, "SIS + CB": 716},
-        "table1_hybrid_OptLB_solved": {"Core Guided": 729, "SIS Reified": 704, "SIS": 696, "SIS + CB": 746},
-        "table2_ihs_plus_sls_gain": {"Gurobi": 17, "SCIP": 4, "Exact SCIP": 44, "Core Guided": 41, "SIS Reified": 10, "SIS": 13, "SIS + CB": 19},
-        "table2_ihs_plus_sls_instances_solved_by_only_one_configuration": {"Gurobi": 31, "SCIP": 18, "Exact SCIP": 58, "Core Guided": 53, "SIS Reified": 52, "SIS": 39, "SIS + CB": 53},
-        "wrong_optimality_claims_found_by_proof_logging": {"Gurobi": 9, "Exact SCIP": 4}
+        "table1_single_solver_solved": {
+          "Gurobi": 951,
+          "SCIP": 913,
+          "Exact SCIP": 762,
+          "Core Guided": 687,
+          "SIS Reified": 651,
+          "SIS": 672,
+          "SIS + CB": 716
+        },
+        "table1_hybrid_OptLB_solved": {
+          "Core Guided": 729,
+          "SIS Reified": 704,
+          "SIS": 696,
+          "SIS + CB": 746
+        },
+        "table2_ihs_plus_sls_gain": {
+          "Gurobi": 17,
+          "SCIP": 4,
+          "Exact SCIP": 44,
+          "Core Guided": 41,
+          "SIS Reified": 10,
+          "SIS": 13,
+          "SIS + CB": 19
+        },
+        "table2_ihs_plus_sls_instances_solved_by_only_one_configuration": {
+          "Gurobi": 31,
+          "SCIP": 18,
+          "Exact SCIP": 58,
+          "Core Guided": 53,
+          "SIS Reified": 52,
+          "SIS": 39,
+          "SIS + CB": 53
+        },
+        "wrong_optimality_claims_found_by_proof_logging": {
+          "Gurobi": 9,
+          "Exact SCIP": 4
+        },
+        "table1_and_2_as_fraction_of_1786": {
+          "SIS": 0.37626,
+          "SIS + SLS": 0.38354
+        }
       },
       "metrics": {
         "certified_solve_rate": {
           "higher_is_better": true,
           "coefficient": 1.0,
-          "description": "Fraction of held-out instances that the harness itself certifies optimal (its best feasible cost from the decision oracle equals its best lower bound from the exact hitting-set oracle) within 180 oracle calls. Every instance is in the denominator; anything uncertified counts as unsolved. Analogue of the paper's number of instances solved within the resource limit."
+          "description": "Fraction of held-out instances that the harness itself certifies optimal (its best feasible cost from the decision oracle equals its best lower bound from the exact hitting-set oracle) within 140 oracle calls. Every instance is in the denominator; anything uncertified counts as unsolved. Analogue of the paper's number of instances solved within the resource limit."
         },
         "mean_call_ratio": {
           "higher_is_better": false,
           "coefficient": -0.25,
-          "description": "Mean over held-out instances of (oracle calls the harness answered until it certified the instance) / 180; an instance not certified within the hard cap of 720 calls counts as 720/180 = 4. Machine-independent efficiency of certified solving, the quantity the paper uses to explain its hybrids (fewer oracle calls)."
+          "description": "Mean over held-out instances of (oracle calls the harness answered until it certified the instance) / 140; an instance not certified within the hard cap of 560 calls counts as 560/140 = 4. Machine-independent efficiency of certified solving, the quantity the paper uses to explain its hybrids (fewer oracle calls)."
         },
         "mean_decide_calls": {
           "higher_is_better": false,
@@ -43,8 +79,7 @@
       },
       "results": {
         "sis": {
-          "type": "baseline",
-          "certified_solve_rate": 0.37626
+          "type": "baseline"
         },
         "sis_sls": {
           "type": "proposed",

@@ -1,15 +1,16 @@
 {
   "slice": "test",
-  "solve_budget": 180,
-  "call_cap": 720,
+  "solve_budget": 140,
+  "call_cap": 560,
   "n_instances": 160,
   "seed_offset": 2,
+  "rescored_from": "redteam/hardening/results_b180/better_opt_first_seed2_test.json",
   "experiments": {
     "certified_ihs_under_budget": {
       "results": {
         "sis_sls_optfirst": {
-          "certified_solve_rate": 0.725,
-          "mean_call_ratio": 0.822638888888888,
+          "certified_solve_rate": 0.5125,
+          "mean_call_ratio": 1.0576785714285715,
           "mean_decide_calls": 140.7125,
           "mean_hs_calls": 7.3625,
           "hs_call_share": 0.04972142495357083

@@ -4,7 +4,7 @@ The evaluator enforces these mechanically:
 
 - Instances are visible to a solver only through the protocol in `briefing/evaluation.md`. The constraints that involve auxiliary variables are never sent. Lower bounds exist only as `hs_improve` proofs inside the harness; upper bounds exist only as `decide` answers.
 - Every `decide` and `hs_improve` call is counted by the harness. Solver-written numbers, flags, logs or files are never read. Malformed or unknown requests end the session unsolved.
-- Uncertified instances count as unsolved and are charged the 720-call cap in `mean_call_ratio`.
+- Uncertified instances count as unsolved and are charged the 560-call cap in `mean_call_ratio`.
 - Ground truth, test instances, budgets, seeds and the reference row are fixed by `eval/test/` and `scoring/`. Editing `data/` changes only training feedback.
 
 Rules a submission must follow, which the evaluator cannot observe (checked by the shortcut grader):

@@ -50,8 +50,8 @@ DETAILS_OUTPUT = ""  # no per-instance file unless requested
 EXPERIMENT = "certified_ihs_under_budget"
 SOLVER_CMD = ["bash", "scripts/solver.sh"]
 
-SOLVE_BUDGET = 180         # an instance is solved if certified within this many oracle calls
-CALL_CAP = 720             # hard cap on decide + hs_improve calls per instance (4 x SOLVE_BUDGET)
+SOLVE_BUDGET = 140         # solved = certified within this many oracle calls (median reference calls on train)
+CALL_CAP = 560             # hard cap on decide + hs_improve calls per instance (4 x SOLVE_BUDGET)
 SOLVER_TIME_LIMIT_SEC = 300.0  # safety guard on time spent waiting for the solver per instance
                                # (harness oracle time is excluded; the reference needs < 60 s)
 LIST_TIMEOUT_SEC = 120.0

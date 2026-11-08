@@ -1,0 +1,20 @@
+{
+  "slice": "test",
+  "solve_budget": 180,
+  "call_cap": 720,
+  "n_instances": 160,
+  "seed_offset": 2,
+  "experiments": {
+    "certified_ihs_under_budget": {
+      "results": {
+        "sis_sls_optfirst": {
+          "certified_solve_rate": 0.725,
+          "mean_call_ratio": 0.822638888888888,
+          "mean_decide_calls": 140.7125,
+          "mean_hs_calls": 7.3625,
+          "hs_call_share": 0.04972142495357083
+        }
+      }
+    }
+  }
+}

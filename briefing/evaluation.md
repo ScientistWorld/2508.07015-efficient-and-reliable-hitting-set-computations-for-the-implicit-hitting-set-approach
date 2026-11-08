@@ -14,7 +14,7 @@
 ## Protocol (JSON lines)
 
 1. The harness sends one line:
-   `{"type": "instance", "n_objective": n, "weights": [...], "seed_constraints": [C, ...], "budget": 720, "solve_budget": 180, "seed": s}`
+   `{"type": "instance", "n_objective": n, "weights": [...], "seed_constraints": [C, ...], "budget": 560, "solve_budget": 140, "seed": s}`
    Constraint format `C = {"terms": [[coeff, var, polarity], ...], "rhs": k}` means `sum coeff * lit >= k`, where `lit = x_var` if `polarity == 1`, else `1 - x_var`.
 2. The solver sends requests, one JSON object per line. The harness answers each with one line.
    - `{"op": "decide", "assumptions": [[var, value], ...]}` — any subset of objective variables, values 0/1.
@@ -24,7 +24,7 @@
    - `{"op": "done"}` ends the session.
 
    Every answer also carries the harness's own `lb`, `ub`, `calls_left` and `certified`.
-3. Each `decide` or `hs_improve` costs one call. The session ends when the harness has certified the instance (`lb >= ub`), when the solver sends `done` or exits, when the 720-call cap is reached (`{"error": "budget_exhausted"}`), on any malformed request (`{"error": "protocol_error"}`), or at a safety limit.
+3. Each `decide` or `hs_improve` costs one call. The session ends when the harness has certified the instance (`lb >= ub`), when the solver sends `done` or exits, when the 560-call cap is reached (`{"error": "budget_exhausted"}`), on any malformed request (`{"error": "protocol_error"}`), or at a safety limit.
 
 The harness keeps its own log. Its upper bound is the cheapest feasible assignment its decision oracle has returned. Its lower bound is the largest `b` for which its exact oracle answered `sat: false`. A solver cannot submit answers, bounds, certificates or counts. Other messages are protocol errors and end the session unsolved.
 
@@ -32,8 +32,8 @@ The harness keeps its own log. Its upper bound is the cheapest feasible assignme
 
 Every instance is in every denominator; each variant sees the same instances and the same seeds.
 
-- `certified_solve_rate` (primary, coefficient +1.0): fraction of instances certified within 180 oracle calls.
-- `mean_call_ratio` (coefficient −0.25, lower is better): mean of (calls answered until certification) / 180. An instance not certified within the 720-call cap counts as 4.
+- `certified_solve_rate` (primary, coefficient +1.0): fraction of instances certified within 140 oracle calls. The solve budget of 140 is the reference solver's median calls-to-certify on the training instances, where the rate is most sensitive to efficiency gains.
+- `mean_call_ratio` (coefficient −0.25, lower is better): mean of (calls answered until certification) / 140. An instance not certified within the 560-call cap counts as 4.
 - Diagnostics, not ranked: `mean_decide_calls`, `mean_hs_calls`, `hs_call_share`.
 
 Rank of a submission = Σ coefficient × (its value − reference value). The reference value is the proposed `sis_sls` row of `scoring/scores_test.json`. A run that certifies nothing scores 0 on the solve rate and 4 on the call ratio, which is the worst possible on both.

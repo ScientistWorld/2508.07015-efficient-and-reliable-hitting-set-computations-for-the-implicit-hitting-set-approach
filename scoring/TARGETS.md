@@ -6,8 +6,8 @@ Scored by `scripts/evaluate_test.sh` (hidden test, 160 held-out instances) and m
 
 Ranked metrics (coefficients in `scoring/reference.json`):
 
-- `certified_solve_rate` (benefit and constraint, primary, +1.0): fraction of instances the harness certifies optimal within 180 oracle calls. Certification is computed by the harness from its own oracle log; a solver cannot claim it.
-- `mean_call_ratio` (benefit, −0.25, lower is better): mean oracle calls until certification divided by 180. An instance uncertified within the 720-call cap counts as 4, so a run that fails cannot gain efficiency credit.
+- `certified_solve_rate` (benefit and constraint, primary, +1.0): fraction of instances the harness certifies optimal within 140 oracle calls. Certification is computed by the harness from its own oracle log; a solver cannot claim it.
+- `mean_call_ratio` (benefit, −0.25, lower is better): mean oracle calls until certification divided by 140. An instance uncertified within the 560-call cap counts as 4, so a run that fails cannot gain efficiency credit.
 
 Diagnostics (coefficient 0): `mean_decide_calls`, `mean_hs_calls`, `hs_call_share`.
 
