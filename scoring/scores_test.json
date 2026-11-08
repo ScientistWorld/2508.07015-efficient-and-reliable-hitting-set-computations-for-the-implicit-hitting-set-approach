@@ -2,24 +2,24 @@
   "slice": "test",
   "solve_budget": 180,
   "call_cap": 720,
-  "n_instances": 80,
+  "n_instances": 160,
   "seed_offset": 0,
   "experiments": {
     "certified_ihs_under_budget": {
       "results": {
         "sis": {
-          "certified_solve_rate": 0.2375,
-          "mean_call_ratio": 1.6195138888888891,
-          "mean_decide_calls": 126.075,
-          "mean_hs_calls": 162.95,
-          "hs_call_share": 0.563792059510423
+          "certified_solve_rate": 0.25,
+          "mean_call_ratio": 1.613784722222222,
+          "mean_decide_calls": 126.30625,
+          "mean_hs_calls": 164.175,
+          "hs_call_share": 0.5651827785786518
         },
         "sis_sls": {
-          "certified_solve_rate": 0.7,
-          "mean_call_ratio": 0.8415972222222221,
-          "mean_decide_calls": 134.075,
-          "mean_hs_calls": 17.4125,
-          "hs_call_share": 0.11494347718458618
+          "certified_solve_rate": 0.68125,
+          "mean_call_ratio": 0.8592013888888891,
+          "mean_decide_calls": 137.58125,
+          "mean_hs_calls": 17.075,
+          "hs_call_share": 0.11040614265508183
         }
       }
     }
