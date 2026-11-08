@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Hardening check: regenerate-instances check, reference (sis, sis_sls) on train + hidden test via the new counted-oracle harness, then better/weaker variants, 3-seed noise runs and all shortcuts through the unchanged evaluate_test.sh (redteam/hardening/run_controls.sh). CPU only, ~2-3 h, resumable."
+notes: "Resubmit after node drain (previous job preempted): official hidden-test reference on 160 instances with harness v2 (train already done), paired seed-noise runs, fixed shortcuts and private-exact shortcut via unchanged evaluate_test.sh. CPU only, ~3.5 h, resumable."
