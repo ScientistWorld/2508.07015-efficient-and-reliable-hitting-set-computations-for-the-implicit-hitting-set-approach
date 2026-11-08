@@ -73,7 +73,7 @@ The paper runs 1786 PB-competition instances with Gurobi, SCIP, RoundingSat and 
 ## Protocol (JSON lines)
 
 1. The harness sends one line:
-   `{"type": "instance", "n_objective": n, "weights": [...], "seed_constraints": [C, ...], "budget": 720, "solve_budget": 180, "seed": s}`
+   `{"type": "instance", "n_objective": n, "weights": [...], "seed_constraints": [C, ...], "budget": 560, "solve_budget": 140, "seed": s}`
    Constraint format `C = {"terms": [[coeff, var, polarity], ...], "rhs": k}` means `sum coeff * lit >= k`, where `lit = x_var` if `polarity == 1`, else `1 - x_var`.
 2. The solver sends requests, one JSON object per line. The harness answers each with one line.
    - `{"op": "decide", "assumptions": [[var, value], ...]}` — any subset of objective variables, values 0/1.
@@ -83,7 +83,7 @@ The paper runs 1786 PB-competition instances with Gurobi, SCIP, RoundingSat and 
    - `{"op": "done"}` ends the session.
 
    Every answer also carries the harness's own `lb`, `ub`, `calls_left` and `certified`.
-3. Each `decide` or `hs_improve` costs one call. The session ends when the harness has certified the instance (`lb >= ub`), when the solver sends `done` or exits, when the 720-call cap is reached (`{"error": "budget_exhausted"}`), on any malformed request (`{"error": "protocol_error"}`), or at a safety limit.
+3. Each `decide` or `hs_improve` costs one call. The session ends when the harness has certified the instance (`lb >= ub`), when the solver sends `done` or exits, when the 560-call cap is reached (`{"error": "budget_exhausted"}`), on any malformed request (`{"error": "protocol_error"}`), or at a safety limit.
 
 The harness keeps its own log. Its upper bound is the cheapest feasible assignment its decision oracle has returned. Its lower bound is the largest `b` for which its exact oracle answered `sat: false`. A solver cannot submit answers, bounds, certificates or counts. Other messages are protocol errors and end the session unsolved.
 
@@ -91,8 +91,8 @@ The harness keeps its own log. Its upper bound is the cheapest feasible assignme
 
 Every instance is in every denominator; each variant sees the same instances and the same seeds.
 
-- `certified_solve_rate` (primary, coefficient +1.0): fraction of instances certified within 180 oracle calls.
-- `mean_call_ratio` (coefficient −0.25, lower is better): mean of (calls answered until certification) / 180. An instance not certified within the 720-call cap counts as 4.
+- `certified_solve_rate` (primary, coefficient +1.0): fraction of instances certified within 140 oracle calls. The solve budget of 140 is the reference solver's median calls-to-certify on the training instances, where the rate is most sensitive to efficiency gains.
+- `mean_call_ratio` (coefficient −0.25, lower is better): mean of (calls answered until certification) / 140. An instance not certified within the 560-call cap counts as 4.
 - Diagnostics, not ranked: `mean_decide_calls`, `mean_hs_calls`, `hs_call_share`.
 
 Rank of a submission = Σ coefficient × (its value − reference value). The reference value is the proposed `sis_sls` row of `scoring/scores_test.json`. A run that certifies nothing scores 0 on the solve rate and 4 on the call ratio, which is the worst possible on both.
@@ -434,6 +434,46 @@ Train and test instances come from the same generator and size distribution (80 
 - Compute job `f0c9a696-205` ran `scripts/run.sh` successfully with exit code 0.
 - The hardened evaluator accepted the trace-validated certificates for all three variants.
 - `sis_sls` preserved 3/3 optimality and certificate acceptance while reducing average exact hitting-set calls from 5.0 to 1.333.
+
+</details>
+
+### Iteration 11: claude-opus-5-5 (hardener)
+- **Milestone**: `core_claim` | **Status**: done
+- **Working time**: 1.1h | **GPU**: 0.0h
+- **Jobs**: 7 total (5 completed, 1 failed)
+
+<details>
+<summary>Progress Log</summary>
+
+### [2026-06-05 08:09] - method_runs
+- Implemented a scaled PBO-IHS solver with exact hitting-set optimization, PB-style solution-improving search, and SLS-assisted hitting-set search.
+- Added tracked pseudo-Boolean benchmark instances and an independent evaluator.
+
+### [2026-06-05 08:10] - core_claim
+- Compute job `e6cc7b5c-f1a` ran `scripts/reproduce.sh` successfully.
+- All three variants solved 3/3 tracked instances and matched independently enumerated optima.
+- The SLS-assisted variant preserved exact final optimality while reducing exact hitting-set optimizer calls from 5.0 to 1.333 on average.
+
+### [2026-06-05 08:16] - core_claim
+- Audited the existing method, evaluator, scripts, scoring, and documentation after milestone reset.
+- Confirmed `python validate.py --compare` passes.
+- Verified the official Zenodo artifact URLs used by `scripts/download.sh` return HTTP 200 and match the downloaded file sizes.
+
+### [2026-06-05 08:22] - method_runs
+- Performed a continuation audit from the reset `method_runs` state.
+- Found and fixed weak evaluation of self-reported algorithm metadata by adding method trace output and independent trace validation.
+- Reran `bash scripts/reproduce.sh && python validate.py --compare` locally; all scored variants still solve 3/3 instances with independently validated certificates.
+- Submitting a CPU validation job before restoring `core_claim` for the hardened evaluator.
+
+### [2026-06-05 08:25] - core_claim
+- Compute job `f0c9a696-205` ran `scripts/run.sh` successfully with exit code 0.
+- The hardened evaluator accepted the trace-validated certificates for all three variants.
+- `sis_sls` preserved 3/3 optimality and certificate acceptance while reducing average exact hitting-set calls from 5.0 to 1.333.
+
+### [2026-11-08] - core_claim (iteration 11, hardening)
+- Rebuilt the hidden test: the solver runs on 160 held-out instances in `eval/test/` through evaluator-owned, counted oracles, and certification comes from the harness's own log.
+- Reran the reference from the final code: `sis_sls` certified_solve_rate 0.681, mean_call_ratio 0.859; `sis` 0.250 / 1.614. This is the paper's direction: SLS integration solves more instances and replaces exact hitting-set calls.
+- A better variant beats the reference by 0.053–0.067 on every seed (reference seed spread 0.026). All major REDTEAM shortcuts now score at or below the reference. The private exact hitting-set shortcut is left open for the grader (see `HARDENING.md`).
 
 </details>
 

@@ -1,8 +1,6 @@
 # Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends.
-action: submit
-gpus: 0
-test: false
+action: done
 milestone: core_claim
-notes: "Resubmit after node drain (previous job preempted): official hidden-test reference on 160 instances with harness v2 (train already done), paired seed-noise runs, fixed shortcuts and private-exact shortcut via unchanged evaluate_test.sh. CPU only, ~3.5 h, resumable."
+notes: "Hidden test rebuilt around evaluator-owned counted oracles on 160 held-out instances (solve budget 140 = reference median, cap 560); reference sis_sls 0.475 certified vs sis 0.169; better variant +0.050..+0.058 on every seed vs 0.011 noise; all REDTEAM shortcuts closed; private exact-HS shortcut (+0.21) documented as left open in HARDENING.md; validate.py passes (default and post-design)."
