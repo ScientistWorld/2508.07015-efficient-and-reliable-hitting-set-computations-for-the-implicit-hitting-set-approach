@@ -1,40 +1,25 @@
 {
   "slice": "test",
+  "solve_budget": 180,
+  "call_cap": 720,
+  "n_instances": 80,
+  "seed_offset": 0,
   "experiments": {
-    "scaled_pbo_ihs_exactness": {
+    "certified_ihs_under_budget": {
       "results": {
-        "ip_exact": {
-          "solved_count": 3,
-          "optimality_match_rate": 1.0,
-          "certificate_accept_rate": 1.0,
-          "selected_trace_accept_rate": 1.0,
-          "exact_hs_call_fraction": 1.0,
-          "avg_iterations": 2.3333333333333335,
-          "avg_decision_calls": 20.666666666666668,
-          "avg_exact_hs_calls": 2.3333333333333335,
-          "sls_successes": 0
-        },
         "sis": {
-          "solved_count": 3,
-          "optimality_match_rate": 1.0,
-          "certificate_accept_rate": 1.0,
-          "selected_trace_accept_rate": 1.0,
-          "exact_hs_call_fraction": 1.0,
-          "avg_iterations": 2.3333333333333335,
-          "avg_decision_calls": 20.666666666666668,
-          "avg_exact_hs_calls": 2.3333333333333335,
-          "sls_successes": 0
+          "certified_solve_rate": 0.2375,
+          "mean_call_ratio": 1.6195138888888891,
+          "mean_decide_calls": 126.075,
+          "mean_hs_calls": 162.95,
+          "hs_call_share": 0.563792059510423
         },
         "sis_sls": {
-          "solved_count": 3,
-          "optimality_match_rate": 1.0,
-          "certificate_accept_rate": 1.0,
-          "selected_trace_accept_rate": 1.0,
-          "exact_hs_call_fraction": 0.14285714285714285,
-          "avg_iterations": 2.3333333333333335,
-          "avg_decision_calls": 20.666666666666668,
-          "avg_exact_hs_calls": 0.3333333333333333,
-          "sls_successes": 6
+          "certified_solve_rate": 0.7,
+          "mean_call_ratio": 0.8415972222222221,
+          "mean_decide_calls": 134.075,
+          "mean_hs_calls": 17.4125,
+          "hs_call_share": 0.11494347718458618
         }
       }
     }

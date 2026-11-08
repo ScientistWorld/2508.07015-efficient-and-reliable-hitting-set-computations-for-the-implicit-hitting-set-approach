@@ -1,0 +1,27 @@
+{
+  "slice": "test",
+  "solve_budget": 180,
+  "call_cap": 720,
+  "n_instances": 80,
+  "seed_offset": 2,
+  "experiments": {
+    "certified_ihs_under_budget": {
+      "results": {
+        "sis": {
+          "certified_solve_rate": 0.2375,
+          "mean_call_ratio": 1.6195138888888891,
+          "mean_decide_calls": 126.1,
+          "mean_hs_calls": 162.9875,
+          "hs_call_share": 0.5637998875772906
+        },
+        "sis_sls": {
+          "certified_solve_rate": 0.7125,
+          "mean_call_ratio": 0.8293055555555551,
+          "mean_decide_calls": 131.5,
+          "mean_hs_calls": 17.775,
+          "hs_call_share": 0.11907553173672751
+        }
+      }
+    }
+  }
+}

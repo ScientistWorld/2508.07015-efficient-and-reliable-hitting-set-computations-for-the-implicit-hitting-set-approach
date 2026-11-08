@@ -1,0 +1,271 @@
+{
+  "coefficients": {
+    "certified_solve_rate": 1.0,
+    "mean_call_ratio": -0.25
+  },
+  "weight": 1.0,
+  "anchor": "redteam/hardening/results/reference_seed0_test.json",
+  "cases": {
+    "better_opt_first_seed0": {
+      "sis_sls_optfirst": {
+        "metrics": {
+          "certified_solve_rate": 0.75,
+          "mean_call_ratio": 0.8023611111111111,
+          "mean_decide_calls": 137.4125,
+          "mean_hs_calls": 7.0125,
+          "hs_call_share": 0.048554613120997056
+        },
+        "delta_vs_reference_sis_sls": 0.0598090277777778,
+        "delta_vs_same_named_reference_row": 0.0598090277777778
+      }
+    },
+    "better_opt_first_seed1": {
+      "sis_sls_optfirst": {
+        "metrics": {
+          "certified_solve_rate": 0.775,
+          "mean_call_ratio": 0.7947916666666666,
+          "mean_decide_calls": 136.0125,
+          "mean_hs_calls": 7.05,
+          "hs_call_share": 0.04927916120576671
+        },
+        "delta_vs_reference_sis_sls": 0.08670138888888895,
+        "delta_vs_same_named_reference_row": 0.08670138888888895
+      }
+    },
+    "better_opt_first_seed2": {
+      "sis_sls_optfirst": {
+        "metrics": {
+          "certified_solve_rate": 0.7375,
+          "mean_call_ratio": 0.7998611111111106,
+          "mean_decide_calls": 136.4875,
+          "mean_hs_calls": 7.4875,
+          "hs_call_share": 0.05200555652022921
+        },
+        "delta_vs_reference_sis_sls": 0.04793402777777797,
+        "delta_vs_same_named_reference_row": 0.04793402777777797
+      }
+    },
+    "reference_seed0": {
+      "sis": {
+        "metrics": {
+          "certified_solve_rate": 0.2375,
+          "mean_call_ratio": 1.6079166666666669,
+          "mean_decide_calls": 126.2625,
+          "mean_hs_calls": 163.1625,
+          "hs_call_share": 0.5637470847369785
+        },
+        "delta_vs_reference_sis_sls": -0.6540798611111112,
+        "delta_vs_same_named_reference_row": 0.0
+      },
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.7,
+          "mean_call_ratio": 0.8415972222222221,
+          "mean_decide_calls": 134.075,
+          "mean_hs_calls": 17.4125,
+          "hs_call_share": 0.11494347718458618
+        },
+        "delta_vs_reference_sis_sls": 0.0,
+        "delta_vs_same_named_reference_row": 0.0
+      }
+    },
+    "reference_seed1": {
+      "sis": {
+        "metrics": {
+          "certified_solve_rate": 0.2375,
+          "mean_call_ratio": 1.6195138888888891,
+          "mean_decide_calls": 126.2125,
+          "mean_hs_calls": 163.125,
+          "hs_call_share": 0.5637879638830086
+        },
+        "delta_vs_reference_sis_sls": -0.6569791666666667,
+        "delta_vs_same_named_reference_row": -0.0028993055555555647
+      },
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.65,
+          "mean_call_ratio": 0.8418055555555553,
+          "mean_decide_calls": 133.5625,
+          "mean_hs_calls": 17.9625,
+          "hs_call_share": 0.11854479458835175
+        },
+        "delta_vs_reference_sis_sls": -0.05005208333333322,
+        "delta_vs_same_named_reference_row": -0.05005208333333322
+      }
+    },
+    "reference_seed2": {
+      "sis": {
+        "metrics": {
+          "certified_solve_rate": 0.2375,
+          "mean_call_ratio": 1.6195138888888891,
+          "mean_decide_calls": 126.1,
+          "mean_hs_calls": 162.9875,
+          "hs_call_share": 0.5637998875772906
+        },
+        "delta_vs_reference_sis_sls": -0.6569791666666667,
+        "delta_vs_same_named_reference_row": -0.0028993055555555647
+      },
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.7125,
+          "mean_call_ratio": 0.8293055555555551,
+          "mean_decide_calls": 131.5,
+          "mean_hs_calls": 17.775,
+          "hs_call_share": 0.11907553173672751
+        },
+        "delta_vs_reference_sis_sls": 0.015572916666666825,
+        "delta_vs_same_named_reference_row": 0.015572916666666825
+      }
+    },
+    "shortcut_baseline_degrade": {
+      "sis": {
+        "metrics": {
+          "certified_solve_rate": 0.0,
+          "mean_call_ratio": 4.0,
+          "mean_decide_calls": 0.0,
+          "mean_hs_calls": 0.0,
+          "hs_call_share": 0.0
+        },
+        "delta_vs_reference_sis_sls": -1.4896006944444444,
+        "delta_vs_same_named_reference_row": -0.8355208333333333
+      },
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.7,
+          "mean_call_ratio": 0.8415972222222221,
+          "mean_decide_calls": 134.075,
+          "mean_hs_calls": 17.4125,
+          "hs_call_share": 0.11494347718458618
+        },
+        "delta_vs_reference_sis_sls": 0.0,
+        "delta_vs_same_named_reference_row": 0.0
+      }
+    },
+    "shortcut_data_replace": {
+      "sis": {
+        "metrics": {
+          "certified_solve_rate": 0.2375,
+          "mean_call_ratio": 1.6079166666666669,
+          "mean_decide_calls": 126.2625,
+          "mean_hs_calls": 163.1625,
+          "hs_call_share": 0.5637470847369785
+        },
+        "delta_vs_reference_sis_sls": -0.6540798611111112,
+        "delta_vs_same_named_reference_row": 0.0
+      },
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.7,
+          "mean_call_ratio": 0.8415972222222221,
+          "mean_decide_calls": 134.075,
+          "mean_hs_calls": 17.4125,
+          "hs_call_share": 0.11494347718458618
+        },
+        "delta_vs_reference_sis_sls": 0.0,
+        "delta_vs_same_named_reference_row": 0.0
+      }
+    },
+    "shortcut_forged_report": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.0,
+          "mean_call_ratio": 4.0,
+          "mean_decide_calls": 0.0,
+          "mean_hs_calls": 0.0,
+          "hs_call_share": 0.0
+        },
+        "delta_vs_reference_sis_sls": -1.4896006944444444,
+        "delta_vs_same_named_reference_row": -1.4896006944444444
+      }
+    },
+    "shortcut_immediate_done": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.0,
+          "mean_call_ratio": 4.0,
+          "mean_decide_calls": 0.0,
+          "mean_hs_calls": 0.0,
+          "hs_call_share": 0.0
+        },
+        "delta_vs_reference_sis_sls": -1.4896006944444444,
+        "delta_vs_same_named_reference_row": -1.4896006944444444
+      }
+    },
+    "shortcut_private_exact_hs": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.8375,
+          "mean_call_ratio": 0.7416666666666665,
+          "mean_decide_calls": 125.7,
+          "mean_hs_calls": 0.9875,
+          "hs_call_share": 0.007794770596941293
+        },
+        "delta_vs_reference_sis_sls": 0.16248263888888897,
+        "delta_vs_same_named_reference_row": 0.16248263888888897
+      }
+    },
+    "shortcut_public_train_lookup": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.7,
+          "mean_call_ratio": 0.8415972222222221,
+          "mean_decide_calls": 134.075,
+          "mean_hs_calls": 17.4125,
+          "hs_call_share": 0.11494347718458618
+        },
+        "delta_vs_reference_sis_sls": 0.0,
+        "delta_vs_same_named_reference_row": 0.0
+      }
+    },
+    "shortcut_read_hidden_file": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.725,
+          "mean_call_ratio": 0.834236111111111,
+          "mean_decide_calls": 129.275,
+          "mean_hs_calls": 20.8875,
+          "hs_call_share": 0.13909930908182802
+        },
+        "delta_vs_reference_sis_sls": 0.02684027777777781,
+        "delta_vs_same_named_reference_row": 0.02684027777777781
+      }
+    },
+    "shortcut_spam_decide": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.0,
+          "mean_call_ratio": 4.0,
+          "mean_decide_calls": 720.0,
+          "mean_hs_calls": 0.0,
+          "hs_call_share": 0.0
+        },
+        "delta_vs_reference_sis_sls": -1.4896006944444444,
+        "delta_vs_same_named_reference_row": -1.4896006944444444
+      }
+    },
+    "weaker_single_core": {
+      "sis_sls_single_core": {
+        "metrics": {
+          "certified_solve_rate": 0.6375,
+          "mean_call_ratio": 0.9697916666666666,
+          "mean_decide_calls": 146.0,
+          "mean_hs_calls": 10.425,
+          "hs_call_share": 0.06664535719993607
+        },
+        "delta_vs_reference_sis_sls": -0.09454861111111112,
+        "delta_vs_same_named_reference_row": -0.09454861111111112
+      }
+    }
+  },
+  "train_cases": {
+    "shortcut_public_train_lookup": {
+      "sis_sls": {
+        "certified_solve_rate": 0.7125,
+        "mean_call_ratio": 0.8040972222222227,
+        "mean_decide_calls": 124.725,
+        "mean_hs_calls": 20.0125,
+        "hs_call_share": 0.13826755332930304
+      }
+    }
+  }
+}
