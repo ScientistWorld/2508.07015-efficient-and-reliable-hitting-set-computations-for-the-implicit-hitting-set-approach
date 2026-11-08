@@ -81,26 +81,27 @@ seed_case() {
   restore
 }
 
-# 1. Reference and seed noise (paired: same instances, same seeds per offset)
+# 1. Seed noise, paired (same instances, same seeds per offset).  Offset 0 of
+#    the reference is the official scoring/scores_test.json (copied by scripts/run.sh).
 for k in 0 1 2; do
-  seed_case "reference_seed$k" - "$k"
+  [ "$k" != 0 ] && seed_case "reference_seed$k" - "$k"
   seed_case "better_opt_first_seed$k" better_opt_first.py "$k"
 done
 
-# 2. Weaker control (the `sis` baseline row is scored inside every reference run)
-test_case weaker_single_core weaker_single_core.py
-
-# 3. Shortcuts from REDTEAM.md, re-expressed against the new interface
+# 2. Shortcuts from REDTEAM.md, re-expressed against the new interface
 test_case shortcut_immediate_done shortcut_immediate_done.py
 test_case shortcut_forged_report shortcut_forged_report.py
 test_case shortcut_spam_decide shortcut_spam_decide.py
+
+# 3. Shortcut left open (measured, documented, left to the grader)
+test_case shortcut_private_exact_hs shortcut_private_exact_hs.py
+
+# 4. Shortcuts that tie by construction (each reruns the full reference)
 test_case shortcut_baseline_degrade shortcut_baseline_degrade.py
-test_case shortcut_public_train_lookup shortcut_instance_lookup.py IHS_LOOKUP_FILE=data/instances_train.json
-train_case shortcut_public_train_lookup shortcut_instance_lookup.py IHS_LOOKUP_FILE=data/instances_train.json
 
 # fixed-data replacement: make every public training instance trivially easy
 if [ ! -f "$R/shortcut_data_replace_test.json" ]; then
-  python3 - <<'EOF'
+  python3 - <<'PYEOF'
 import json
 p = "data/instances_train.json"
 d = json.load(open(p))
@@ -109,15 +110,13 @@ for inst in d["instances"]:
     inst["seed_constraints"] = []
     inst["optimum"] = inst["weights"][0]
 json.dump(d, open(p, "w"))
-EOF
+PYEOF
   if bash scripts/evaluate_test.sh > "$R/shortcut_data_replace_test.log" 2>&1; then
     cp scoring/scores_test.json "$R/shortcut_data_replace_test.json"; echo "PASS shortcut_data_replace"
   fi
   restore
 fi
 
-# 4. Shortcuts left open (measured, documented, left to the grader)
-test_case shortcut_private_exact_hs shortcut_private_exact_hs.py
 test_case shortcut_read_hidden_file shortcut_instance_lookup.py IHS_LOOKUP_FILE=eval/test/instances_test.json
 
-python3 $H/summarize.py
+python3 $H/summarize.py results

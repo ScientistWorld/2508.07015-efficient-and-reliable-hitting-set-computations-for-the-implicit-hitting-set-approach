@@ -7,9 +7,9 @@
 | `bash scripts/solver.sh list` | Your solver prints a JSON list of variant names. Every listed variant is scored. |
 | `bash scripts/solver.sh run <variant>` | Runs one protocol session (one instance) on stdin/stdout. |
 | `bash scripts/evaluate_train.sh` | Scores every listed variant on the 80 public training instances → `scoring/scores_train.json`, per-instance `scoring/details_train.json`. |
-| `bash scripts/evaluate_test.sh` | Hidden test, no arguments: scores every listed variant on 80 held-out instances in `eval/test/` → `scoring/scores_test.json`. |
+| `bash scripts/evaluate_test.sh` | Hidden test, no arguments: scores every listed variant on 160 held-out instances in `eval/test/` → `scoring/scores_test.json`. |
 
-`scripts/solver.sh` is the only interface between a solver and the evaluator. To score a different solver, change what that script executes. `eval/` never imports solver code. The harness starts a fresh solver process per instance, with the workspace as the working directory. Solver logs must go to stderr; the harness keeps them in `logs/`. A wall-clock guard of 120 s per instance stops runaway processes. It is a safety limit, not a metric; the reference solver needs under 20 s per instance.
+`scripts/solver.sh` is the only interface between a solver and the evaluator. To score a different solver, change what that script executes. `eval/` never imports solver code. The harness starts a fresh solver process per instance, with the workspace as the working directory. Solver logs must go to stderr; the harness keeps them in `logs/`. Two safety limits stop runaway sessions; neither is a metric. First, a guard of 300 s per instance on time spent waiting for the solver; the harness's own oracle time is excluded, and the reference solver needs under 60 s. Second, deterministic search-node caps on the exact oracle, 2M nodes per call and 20M per instance, more than 10× what any reference session uses. A session that hits either limit ends unsolved.
 
 ## Protocol (JSON lines)
 
@@ -24,7 +24,7 @@
    - `{"op": "done"}` ends the session.
 
    Every answer also carries the harness's own `lb`, `ub`, `calls_left` and `certified`.
-3. Each `decide` or `hs_improve` costs one call. The session ends when the harness has certified the instance (`lb >= ub`), when the solver sends `done` or exits, when the 720-call cap is reached (`{"error": "budget_exhausted"}`), on any malformed request (`{"error": "protocol_error"}`), or at the wall-clock guard.
+3. Each `decide` or `hs_improve` costs one call. The session ends when the harness has certified the instance (`lb >= ub`), when the solver sends `done` or exits, when the 720-call cap is reached (`{"error": "budget_exhausted"}`), on any malformed request (`{"error": "protocol_error"}`), or at a safety limit.
 
 The harness keeps its own log. Its upper bound is the cheapest feasible assignment its decision oracle has returned. Its lower bound is the largest `b` for which its exact oracle answered `sat: false`. A solver cannot submit answers, bounds, certificates or counts. Other messages are protocol errors and end the session unsolved.
 
@@ -40,4 +40,4 @@ Rank of a submission = Σ coefficient × (its value − reference value). The re
 
 ## Train vs test
 
-Train and test instances come from the same generator and size distribution, 80 each, with the same budgets and the same harness code (two independent copies). The public generator cannot reproduce the test instances: their seed is private to `eval/test/`. Train scores are feedback only. A solver tuned to the identity of training instances gains nothing on test.
+Train and test instances come from the same generator and size distribution (80 training, 160 held-out), with the same budgets and the same harness code (two independent copies). The public generator cannot reproduce the test instances: their seed is private to `eval/test/`. Train scores are feedback only. A solver tuned to the identity of training instances gains nothing on test.

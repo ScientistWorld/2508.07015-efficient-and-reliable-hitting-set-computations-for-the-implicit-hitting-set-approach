@@ -31,7 +31,7 @@ import random
 from pathlib import Path
 
 TEST_SEED = 16270665939503735278329640736036430645
-N_INSTANCES = 80
+N_INSTANCES = 160
 OUT = Path(__file__).resolve().parent / "instances_test.json"
 
 

@@ -17,6 +17,7 @@ if [ "$before" = "$after" ]; then echo "instances reproducible" > "$R/instances_
 # 1. Reference method end to end (train + hidden test scores)
 if [ ! -f "$R/.reference_done" ]; then
   bash scripts/reproduce.sh > "$R/reference_reproduce.log" 2>&1
+  cp scoring/scores_test.json "$R/reference_seed0_test.json"
   touch "$R/.reference_done"
 fi
 

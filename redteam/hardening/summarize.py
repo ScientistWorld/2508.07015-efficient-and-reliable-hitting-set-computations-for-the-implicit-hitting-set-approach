@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-RESULTS = Path(__file__).resolve().parent / "results"
+RESULTS = Path(__file__).resolve().parent / (sys.argv[1] if len(sys.argv) > 1 else "results")
 EXP = "certified_ihs_under_budget"
 
 
@@ -44,12 +44,12 @@ def main() -> None:
         case = path.name[: -len("_train.json")]
         train[case] = json.loads(path.read_text())["experiments"][EXP]["results"]
     out["train_cases"] = train
-    (Path(__file__).resolve().parent / "summary.json").write_text(json.dumps(out, indent=2) + "\n")
+    (RESULTS / "summary.json").write_text(json.dumps(out, indent=2) + "\n")
     for case, entry in out["cases"].items():
         for name, e in entry.items():
             m = e["metrics"]
             print(f"{case:32s} {name:22s} solve={m['certified_solve_rate']:.4f} "
-                  f"budget={m['budget_fraction']:.4f} hs_share={m['hs_call_share']:.3f} "
+                  f"call_ratio={m['mean_call_ratio']:.4f} hs_share={m['hs_call_share']:.3f} "
                   f"delta={e['delta_vs_reference_sis_sls']:+.4f}")
     sys.stdout.flush()
 

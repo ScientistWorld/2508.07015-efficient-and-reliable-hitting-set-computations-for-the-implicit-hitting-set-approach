@@ -4,7 +4,7 @@
     "mean_call_ratio": -0.25
   },
   "weight": 1.0,
-  "anchor": "redteam/hardening/results/reference_seed0_test.json",
+  "anchor": "redteam/hardening/results_v1_80inst/reference_seed0_test.json",
   "cases": {
     "better_opt_first_seed0": {
       "sis_sls_optfirst": {

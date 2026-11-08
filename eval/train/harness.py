@@ -51,9 +51,11 @@ SOLVER_CMD = ["bash", "scripts/solver.sh"]
 
 SOLVE_BUDGET = 180         # an instance is solved if certified within this many oracle calls
 CALL_CAP = 720             # hard cap on decide + hs_improve calls per instance (4 x SOLVE_BUDGET)
-WALL_LIMIT_SEC = 120.0     # safety guard per instance (the reference needs < 20 s), not a metric
+SOLVER_TIME_LIMIT_SEC = 300.0  # safety guard on time spent waiting for the solver per instance
+                               # (harness oracle time is excluded; the reference needs < 60 s)
 LIST_TIMEOUT_SEC = 120.0
-HS_NODE_LIMIT = 3_000_000  # safety guard for one hs_improve call
+HS_NODE_LIMIT = 2_000_000      # deterministic cap on search nodes for one hs_improve call
+HS_SESSION_NODE_LIMIT = 20_000_000  # deterministic cap on hs_improve search nodes per instance
 MAX_LINE_BYTES = 1 << 20
 BASE_SEED = 1009
 # per-instance fields written to the details file (train instances are public)
@@ -288,6 +290,7 @@ class Session:
         self.lb = 0
         self.end_reason = "unknown"
         self.buffer = b""
+        self.nodes = 0
 
     @property
     def calls(self) -> int:
@@ -348,7 +351,9 @@ class Session:
                     or any(isinstance(z, bool) or z not in (0, 1) for z in phase)):
                 raise ProtocolError("phase must be a list of n values in {0,1}")
         self.hs_calls += 1
-        sol, _nodes = hs_improve(n, self.inst.weights, self.cores, bound, phase, HS_NODE_LIMIT)
+        node_limit = min(HS_NODE_LIMIT, HS_SESSION_NODE_LIMIT - self.nodes)
+        sol, nodes = hs_improve(n, self.inst.weights, self.cores, bound, phase, node_limit)
+        self.nodes += nodes
         if sol is None:
             if bound > self.lb:
                 self.lb = bound
@@ -375,7 +380,9 @@ class Session:
 
     def run(self) -> dict:
         start = time.monotonic()
-        deadline = start + WALL_LIMIT_SEC
+        # The guard counts only time spent waiting on the solver: the deadline is
+        # pushed back by however long the harness itself spends answering.
+        deadline = start + SOLVER_TIME_LIMIT_SEC
         proc = subprocess.Popen(
             SOLVER_CMD + ["run", self.variant],
             cwd=str(ROOT),
@@ -416,12 +423,14 @@ class Session:
                 if isinstance(req, dict) and req.get("op") == "done":
                     self.end_reason = "solver_done"
                     break
+                handle_start = time.monotonic()
                 resp = self._handle(req)
+                deadline += time.monotonic() - handle_start
                 self._send(proc, resp, deadline)
                 if resp.get("error") == "budget_exhausted":
                     break
         except TimeoutError:
-            self.end_reason = "wall_limit"
+            self.end_reason = "solver_time_limit"
         except ProtocolError as exc:
             self.end_reason = f"protocol_error: {exc}"
             try:
@@ -448,6 +457,7 @@ class Session:
             "lb": self.lb,
             "ub": self.ub,
             "end_reason": self.end_reason,
+            "hs_nodes": self.nodes,
             "wall_sec": round(time.monotonic() - start, 3),
         }
 

@@ -2,7 +2,7 @@
 
 ## certified_ihs_under_budget
 
-Scored by `scripts/evaluate_test.sh` (hidden test, 80 held-out instances) and mirrored on the 80 public training instances by `scripts/evaluate_train.sh`. Every variant listed by `bash scripts/solver.sh list` is scored. Every instance counts in every denominator.
+Scored by `scripts/evaluate_test.sh` (hidden test, 160 held-out instances) and mirrored on the 80 public training instances by `scripts/evaluate_train.sh`. Every variant listed by `bash scripts/solver.sh list` is scored. Every instance counts in every denominator.
 
 Ranked metrics (coefficients in `scoring/reference.json`):
 
