@@ -4,7 +4,7 @@
 
 - **Gym.** Certified PBO-IHS under an oracle-call budget. Solvers talk to evaluator-owned oracles over a JSON-lines protocol (`briefing/evaluation.md`). The hidden test is 160 held-out generated instances in `eval/test/`; training is 80 public instances in `data/`.
 - **Reference.** `method/pbo_ihs.py` implements PBO-IHS (paper Algorithm 1) with weight-aware core extraction and Solve-HS from Algorithm 2. Variant `sis` runs SIS to optimality; variant `sis_sls` runs Core-SLS with SIS fallback.
-- **Reference scores.** On the hidden test (`scoring/scores_test.json`): `sis_sls` 0.6813 certified within 180 calls, mean call ratio 0.8592; `sis` 0.2500 / 1.6138. On train (`scoring/scores_train.json`): 0.6875 / 0.8105 and 0.2625 / 1.5047.
+- **Reference scores.** On the hidden test (`scoring/scores_test.json`): `sis_sls` certifies 0.475 within 140 calls with mean call ratio 1.108; `sis` 0.169 / 2.033. On train (`scoring/scores_train.json`): 0.500 / 1.042 and 0.1875 / 1.920.
 - **Hardening evidence.** `HARDENING.md` and `redteam/hardening/`.
 
 ## Deviations from the paper
@@ -15,4 +15,4 @@
 ## Open issues
 
 - **Private exact hitting-set optimisation** inside a solver cannot be observed by the evaluator (+0.19 when used). It is forbidden by `scoring/CONSTRAINTS.md` and left to the shortcut grader.
-- **`validate.py --post-design`** flags train `sis_sls` (0.6875) against the paper's fraction of competition instances (0.3835). These numbers are not comparable; see `HARDENING.md`.
+- **The gym's solve rate is not comparable with the paper's** fraction of competition instances (0.384). The two depend on different benchmarks; only the direction is the reproduced claim. See `HARDENING.md`.

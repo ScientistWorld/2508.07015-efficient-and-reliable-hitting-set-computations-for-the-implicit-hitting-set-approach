@@ -1,0 +1,174 @@
+{
+  "coefficients": {
+    "certified_solve_rate": 1.0,
+    "mean_call_ratio": -0.25
+  },
+  "weight": 1.0,
+  "anchor": "redteam/hardening/results/reference_seed0_test.json",
+  "cases": {
+    "better_opt_first_seed0": {
+      "sis_sls_optfirst": {
+        "metrics": {
+          "certified_solve_rate": 0.51875,
+          "mean_call_ratio": 1.0551339285714287,
+          "mean_decide_calls": 140.60625,
+          "mean_hs_calls": 7.1125,
+          "hs_call_share": 0.04814893166913476
+        },
+        "delta_vs_reference_sis_sls": 0.05702008928571434,
+        "delta_vs_same_named_reference_row": 0.05702008928571434
+      }
+    },
+    "better_opt_first_seed1": {
+      "sis_sls_optfirst": {
+        "metrics": {
+          "certified_solve_rate": 0.51875,
+          "mean_call_ratio": 1.05,
+          "mean_decide_calls": 139.9375,
+          "mean_hs_calls": 7.0625,
+          "hs_call_share": 0.04804421768707483
+        },
+        "delta_vs_reference_sis_sls": 0.05830357142857151,
+        "delta_vs_same_named_reference_row": 0.05830357142857151
+      }
+    },
+    "better_opt_first_seed2": {
+      "sis_sls_optfirst": {
+        "metrics": {
+          "certified_solve_rate": 0.5125,
+          "mean_call_ratio": 1.0576785714285715,
+          "mean_decide_calls": 140.7125,
+          "mean_hs_calls": 7.3625,
+          "hs_call_share": 0.04972142495357083
+        },
+        "delta_vs_reference_sis_sls": 0.050133928571428565,
+        "delta_vs_same_named_reference_row": 0.050133928571428565
+      }
+    },
+    "reference_seed0": {
+      "sis": {
+        "metrics": {
+          "certified_solve_rate": 0.16875,
+          "mean_call_ratio": 2.0326339285714288,
+          "mean_decide_calls": 124.2,
+          "mean_hs_calls": 160.36875,
+          "hs_call_share": 0.5635501087171377
+        },
+        "delta_vs_reference_sis_sls": -0.5373549107142856,
+        "delta_vs_same_named_reference_row": 0.0
+      },
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.475,
+          "mean_call_ratio": 1.1082142857142858,
+          "mean_decide_calls": 137.56875,
+          "mean_hs_calls": 17.05625,
+          "hs_call_share": 0.1103071948261924
+        },
+        "delta_vs_reference_sis_sls": 0.0,
+        "delta_vs_same_named_reference_row": 0.0
+      }
+    },
+    "reference_seed1": {
+      "sis": {
+        "metrics": {
+          "certified_solve_rate": 0.16875,
+          "mean_call_ratio": 2.0326339285714288,
+          "mean_decide_calls": 123.9625,
+          "mean_hs_calls": 160.60625,
+          "hs_call_share": 0.564384704926314
+        },
+        "delta_vs_reference_sis_sls": -0.5373549107142856,
+        "delta_vs_same_named_reference_row": 0.0
+      },
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.46875,
+          "mean_call_ratio": 1.0929910714285715,
+          "mean_decide_calls": 136.03125,
+          "mean_hs_calls": 16.9875,
+          "hs_call_share": 0.11101580688641098
+        },
+        "delta_vs_reference_sis_sls": -0.00244419642857141,
+        "delta_vs_same_named_reference_row": -0.00244419642857141
+      }
+    },
+    "reference_seed2": {
+      "sis": {
+        "metrics": {
+          "certified_solve_rate": 0.16875,
+          "mean_call_ratio": 2.0326339285714288,
+          "mean_decide_calls": 123.9625,
+          "mean_hs_calls": 160.60625,
+          "hs_call_share": 0.564384704926314
+        },
+        "delta_vs_reference_sis_sls": -0.5373549107142856,
+        "delta_vs_same_named_reference_row": 0.0
+      },
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.48125,
+          "mean_call_ratio": 1.1000892857142857,
+          "mean_decide_calls": 135.85,
+          "mean_hs_calls": 18.1625,
+          "hs_call_share": 0.11792873955036118
+        },
+        "delta_vs_reference_sis_sls": 0.008281250000000073,
+        "delta_vs_same_named_reference_row": 0.008281250000000073
+      }
+    },
+    "shortcut_forged_report": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.0,
+          "mean_call_ratio": 4.0,
+          "mean_decide_calls": 0.0,
+          "mean_hs_calls": 0.0,
+          "hs_call_share": 0.0
+        },
+        "delta_vs_reference_sis_sls": -1.1979464285714285,
+        "delta_vs_same_named_reference_row": -1.1979464285714285
+      }
+    },
+    "shortcut_immediate_done": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.0,
+          "mean_call_ratio": 4.0,
+          "mean_decide_calls": 0.0,
+          "mean_hs_calls": 0.0,
+          "hs_call_share": 0.0
+        },
+        "delta_vs_reference_sis_sls": -1.1979464285714285,
+        "delta_vs_same_named_reference_row": -1.1979464285714285
+      }
+    },
+    "shortcut_private_exact_hs": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.6375,
+          "mean_call_ratio": 0.9242410714285715,
+          "mean_decide_calls": 128.39375,
+          "mean_hs_calls": 1.0,
+          "hs_call_share": 0.007728348548519538
+        },
+        "delta_vs_reference_sis_sls": 0.20849330357142856,
+        "delta_vs_same_named_reference_row": 0.20849330357142856
+      }
+    },
+    "shortcut_spam_decide": {
+      "sis_sls": {
+        "metrics": {
+          "certified_solve_rate": 0.0,
+          "mean_call_ratio": 4.0,
+          "mean_decide_calls": 560.0,
+          "mean_hs_calls": 0.0,
+          "hs_call_share": 0.0
+        },
+        "delta_vs_reference_sis_sls": -1.1979464285714285,
+        "delta_vs_same_named_reference_row": -1.1979464285714285
+      }
+    }
+  },
+  "train_cases": {}
+}

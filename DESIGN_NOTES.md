@@ -7,6 +7,6 @@ Current design (iteration 11, see `HARDENING.md` for the evidence):
 - **Evaluator-owned certificates.** The upper bound is the harness's own `decide` answers; the lower bound is its own `hs_improve` unsatisfiability proofs over the cores it returned. Call counts are its own. Nothing the solver writes is read.
 - **Scores.** `certified_solve_rate`, the fraction certified within 140 calls (coefficient +1.0), and `mean_call_ratio`, calls to certify / 140 with uncertified instances charged 560/140 = 4 (coefficient −0.25). Three diagnostics have coefficient 0.
 - **Determinism.** Per-instance seeds are fixed by the harness, the oracles are deterministic, and node caps bound the oracle's search. The 300 s guard counts solver-side time only. `--seed-offset` exists only for noise studies; the hidden test always runs offset 0.
-- **Sensitivity.** The reference's seed spread is 0.026 in rank. The `opt?` = false variant beats it by 0.053–0.067 on every seed. The test was enlarged from 80 to 160 instances to reach this margin.
+- **Sensitivity.** The solve budget (140) is the reference's median calls-to-certify on train. The reference's seed spread is 0.011 in rank; the `opt?` = false variant beats it by +0.050 to +0.058 on every seed. The test was enlarged from 80 to 160 instances to reach a clear margin.
 
 History: iterations 4–10 used odd/even trace-event slices of three public instances. That design was replaced because every shortcut in `REDTEAM.md` came from it.
